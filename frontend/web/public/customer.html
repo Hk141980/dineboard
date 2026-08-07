@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Restaurant — Powered by DineBoard</title>
+  <meta name="description" content="Browse menu, book a table, and order food — no login required.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #FF6B35;
+      --primary-dark: #E85A2A;
+      --primary-glow: rgba(255, 107, 53, 0.15);
+      --bg: #0A0A0F;
+      --bg-card: rgba(26, 26, 46, 0.6);
+      --bg-secondary: #12121A;
+      --text: #F5F5F7;
+      --text-sec: #A1A1AA;
+      --text-muted: #71717A;
+      --border: rgba(255, 255, 255, 0.08);
+      --success: #22C55E;
+      --font: 'Inter', -apple-system, sans-serif;
+      --font-display: 'Outfit', 'Inter', sans-serif;
+    }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font); background: var(--bg); color: var(--text); line-height: 1.6; }
+    a { color: inherit; text-decoration: none; }
+
+    /* Header */
+    .header {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(10, 10, 15, 0.9); backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 20px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .header h1 { font-family: var(--font-display); font-size: 1.3rem; font-weight: 800; }
+    .header .tagline { font-size: 0.78rem; color: var(--text-muted); }
+
+    /* Tabs */
+    .tabs {
+      display: flex; gap: 0; background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+      position: sticky; top: 60px; z-index: 99;
+    }
+    .tab {
+      flex: 1; padding: 14px; text-align: center;
+      font-size: 0.85rem; font-weight: 600; cursor: pointer;
+      border-bottom: 3px solid transparent;
+      color: var(--text-sec); transition: all 0.2s;
+    }
+    .tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+    /* Container */
+    .container { max-width: 600px; margin: 0 auto; padding: 20px 20px 100px 20px; }
+
+    /* Menu */
+    .category-title {
+      font-family: var(--font-display); font-size: 1.1rem; font-weight: 700;
+      padding: 20px 0 12px; color: var(--text);
+      border-bottom: 1px solid var(--border); margin-bottom: 12px;
+    }
+    .menu-item {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 14px 16px; margin-bottom: 8px;
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 12px; transition: all 0.2s;
+    }
+    .menu-item:hover { border-color: rgba(255,255,255,0.15); }
+    .menu-item .name { font-weight: 600; font-size: 0.92rem; }
+    .menu-item .desc { font-size: 0.78rem; color: var(--text-muted); margin-top: 2px; }
+    .menu-item .price { font-family: var(--font-display); font-weight: 700; color: var(--primary); font-size: 1rem; white-space: nowrap; }
+    .veg-badge {
+      display: inline-block; width: 14px; height: 14px; border: 2px solid;
+      border-radius: 3px; margin-right: 6px; position: relative; top: 2px;
+    }
+    .veg-badge.veg { border-color: var(--success); }
+    .veg-badge.veg::after { content: ''; position: absolute; width: 6px; height: 6px; background: var(--success); border-radius: 50%; top: 2px; left: 2px; }
+    .veg-badge.nonveg { border-color: #EF4444; }
+    .veg-badge.nonveg::after { content: ''; position: absolute; width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent; border-bottom: 6px solid #EF4444; top: 2px; left: 1px; }
+
+    .add-btn {
+      background: var(--primary); color: white; border: none;
+      padding: 6px 18px; border-radius: 8px; font-weight: 600;
+      font-size: 0.82rem; cursor: pointer; transition: all 0.2s;
+    }
+    .add-btn:hover { background: var(--primary-dark); transform: scale(1.05); }
+
+    /* Cart */
+    .cart-bar {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: var(--primary); color: white; padding: 14px 20px;
+      display: flex; justify-content: space-between; align-items: center;
+      font-weight: 600; cursor: pointer; z-index: 200;
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.5);
+    }
+
+    /* Booking Form */
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-size: 0.82rem; font-weight: 500; color: var(--text-sec); margin-bottom: 6px; }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%; padding: 12px 14px;
+      background: var(--bg-secondary); border: 1px solid var(--border);
+      border-radius: 10px; color: var(--text); font-family: var(--font);
+      font-size: 0.9rem; outline: none;
+    }
+    .form-group input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
+
+    .btn-submit {
+      width: 100%; padding: 14px; border: none; border-radius: 12px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white; font-weight: 700; font-size: 1rem; cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-submit:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(255,107,53,0.3); }
+
+    /* Info Section */
+    .info-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 20px; margin-bottom: 12px;
+    }
+    .info-card h3 { font-family: var(--font-display); font-weight: 700; margin-bottom: 8px; font-size: 0.95rem; }
+    .info-card p { font-size: 0.85rem; color: var(--text-sec); }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.7); backdrop-filter: blur(4px);
+      z-index: 300; display: none; align-items: flex-end; justify-content: center;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal {
+      background: var(--bg-secondary); border-radius: 20px 20px 0 0;
+      width: 100%; max-width: 600px; max-height: 80vh; overflow-y: auto;
+      padding: 24px; border: 1px solid var(--border);
+      animation: slideUp 0.3s ease;
+    }
+    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+    @media (max-width: 640px) {
+      .container { padding: 12px; }
+      .header { padding: 12px 16px; }
+      .header h1 { font-size: 1.1rem; }
+      .tab { padding: 10px 6px; font-size: 0.78rem; }
+      .menu-item { padding: 12px; }
+      .add-btn { padding: 6px 14px; }
+      .category-title { font-size: 1rem; }
+      body { overflow-x: hidden; }
+    }
+
+    /* Ensure full width on all screens */
+    html, body { max-width: 100vw; overflow-x: hidden; }
+
+    /* Phone input with prefix */
+    .phone-input-group {
+      display: flex; align-items: center; gap: 8px;
+    }
+    .phone-prefix {
+      color: var(--text-sec); font-size: 0.9rem;
+      white-space: nowrap; padding: 12px 0 12px 14px;
+      background: var(--bg-secondary); border: 1px solid var(--border);
+      border-right: none; border-radius: 10px 0 0 10px;
+    }
+    .phone-input-group input {
+      border-radius: 0 10px 10px 0 !important;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header" id="restaurant-header">
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <img id="resto-logo" src="" alt="" style="width: 44px; height: 44px; border-radius: 10px; object-fit: cover; display: none; border: 1px solid var(--border);">
+      <div>
+        <h1 id="resto-name">Loading...</h1>
+        <div class="tagline" id="resto-tagline"></div>
+      </div>
+    </div>
+    <div style="text-align: right;">
+      <div style="font-size: 0.78rem; color: var(--text-muted);" id="resto-hours"></div>
+    </div>
+  </header>
+
+  <!-- Seated Table Banner -->
+  <div id="table-banner" style="display: none; background: rgba(255, 107, 53, 0.15); border-bottom: 1px solid var(--primary); padding: 10px 16px; font-size: 0.88rem; font-weight: 600; text-align: center; color: var(--primary); align-items: center; justify-content: center; gap: 6px;">
+    📍 Seated at <span id="table-banner-name">Table</span>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <div class="tab active" data-tab="menu" onclick="switchTab('menu')">🍽️ Menu</div>
+    <div class="tab" data-tab="order" onclick="switchTab('order')">🛒 My Order</div>
+    <div class="tab" data-tab="info" onclick="switchTab('info')">ℹ️ Info</div>
+  </div>
+
+  <!-- Menu Tab -->
+  <div class="tab-content" id="tab-menu">
+    <div class="container" id="menu-container">
+      <p style="text-align: center; padding: 40px; color: var(--text-muted);">Loading menu...</p>
+    </div>
+  </div>
+
+  <!-- My Order Tab -->
+  <div class="tab-content" id="tab-order" style="display: none;">
+    <div class="container">
+      <h2 style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; margin-bottom: 20px;">🛒 Your Order</h2>
+      <div id="cart-items">
+        <p style="text-align: center; padding: 40px; color: var(--text-muted);">Your cart is empty. Add items from the menu!</p>
+      </div>
+      <div id="cart-summary" style="display: none;">
+        <div style="border-top: 1px solid var(--border); padding-top: 16px; margin-top: 16px;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <span style="color: var(--text-sec);">Subtotal</span>
+            <span id="cart-subtotal" style="font-weight: 600;">₹0</span>
+          </div>
+        </div>
+        <div class="form-group" id="customer-name-group" style="margin-top: 16px;">
+          <label>Your Name</label>
+          <input type="text" id="order-name" placeholder="Full name">
+        </div>
+        <div class="form-group" id="customer-phone-group">
+          <label>Phone Number (10 digits)</label>
+          <div class="phone-input-group">
+            <span class="phone-prefix">+91</span>
+            <input type="tel" id="order-phone" placeholder="9876543210" maxlength="10" pattern="[0-9]{10}" oninput="this.value=this.value.replace(/\D/g,'').slice(0,10)">
+          </div>
+        </div>
+        <div id="active-customer-info" style="display: none; padding: 12px 16px; background: rgba(255, 107, 53, 0.1); border: 1px solid rgba(255, 107, 53, 0.25); border-radius: 10px; margin-bottom: 16px;">
+          <div style="font-size: 0.85rem; color: var(--primary); font-weight: 700;">
+            👤 Adding extra items for: <span id="active-customer-name"></span> (<span id="active-customer-phone"></span>)
+          </div>
+          <div style="font-size: 0.78rem; color: var(--text-sec); margin-top: 2px;">
+            Items will be appended directly to active order <strong id="active-order-code"></strong>.
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Promo Code (optional)</label>
+          <div style="display: flex; gap: 8px;">
+            <input type="text" id="promo-code" placeholder="Enter code" style="flex: 1;">
+            <button class="add-btn" onclick="validatePromo()">Apply</button>
+          </div>
+        </div>
+        <button class="btn-submit" onclick="placeOrder()">Place Order</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Info Tab -->
+  <div class="tab-content" id="tab-info" style="display: none;">
+    <div class="container">
+      <h2 style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; margin-bottom: 20px;">ℹ️ Restaurant Info</h2>
+      <div id="info-container">
+        <p style="text-align: center; padding: 40px; color: var(--text-muted);">Loading...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cart Bar -->
+  <div class="cart-bar" id="cart-bar" style="display: none;" onclick="switchTab('order')">
+    <span><span id="cart-count">0</span> items in cart</span>
+    <span>₹<span id="cart-total">0</span> →</span>
+  </div>
+
+  <!-- Order Confirmation Modal -->
+  <div class="modal-overlay" id="order-modal">
+    <div class="modal">
+      <div style="text-align: center; padding: 20px 0;">
+        <div style="font-size: 3rem; margin-bottom: 12px;">✅</div>
+        <h2 style="font-family: var(--font-display); font-weight: 700; margin-bottom: 8px;">Order Placed!</h2>
+        <p style="color: var(--text-sec); margin-bottom: 4px;">Your order code: <strong id="order-code-display"></strong></p>
+        <p style="color: var(--text-sec); font-size: 0.85rem;">You'll receive a confirmation on WhatsApp shortly.</p>
+        <button class="btn-submit" style="margin-top: 20px; width: auto; padding: 12px 32px;" onclick="closeModal('order-modal')">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ---- State ----
+    const API_URL = '/api';
+    let restaurant = null;
+    let menuItems = [];
+    let cart = [];
+    let activeTableOrder = null;
+
+    function getStatusBadge(status) {
+      switch (status) {
+        case 'pending': return '⏳ Order Sent';
+        case 'confirmed': return '✅ Confirmed';
+        case 'preparing': return '👨‍🍳 Kitchen Preparing';
+        case 'ready': return '🔔 Ready to Serve';
+        case 'served': return '🍽️ Served';
+        case 'billed': return '🧾 Bill Sent';
+        case 'paid': return '💰 Paid';
+        default: return status || 'Active';
+      }
+    }
+
+    // Get restaurant slug from URL params
+    const urlParams = new URLSearchParams(window.location.search);
+    const slug = urlParams.get('r') || 'restro';
+
+    // ---- Initialize ----
+    async function init() {
+      try {
+        // Load restaurant info
+        const restoRes = await fetch(`${API_URL}/restaurants/by-slug/${slug}`);
+        const restoData = await restoRes.json();
+        if (restoData.success) {
+          restaurant = restoData.data;
+          document.getElementById('resto-name').textContent = restaurant.name;
+          document.getElementById('resto-tagline').textContent = restaurant.tagline || '';
+          document.getElementById('resto-hours').textContent = `${restaurant.openingTime || '10:00'} - ${restaurant.closingTime || '23:00'}`;
+          document.title = `${restaurant.name} — Powered by DineBoard`;
+
+          if (restaurant.logoUrl) {
+            const logoEl = document.getElementById('resto-logo');
+            if (logoEl) {
+              logoEl.src = restaurant.logoUrl;
+              logoEl.style.display = 'block';
+            }
+          }
+
+          renderInfo();
+        } else {
+          document.getElementById('resto-name').textContent = 'DineBoard Restaurant';
+          document.getElementById('menu-container').innerHTML = `
+            <div style="text-align: center; padding: 60px 20px;">
+              <div style="font-size: 3rem; margin-bottom: 12px;">🔍</div>
+              <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 8px;">Restaurant Not Found</h3>
+              <p style="color: var(--text-sec); font-size: 0.9rem; margin-bottom: 20px;">
+                No active restaurant found for "${slug}".
+              </p>
+              <a href="/customer.html?r=restro" style="display: inline-block; padding: 10px 24px; background: var(--primary); color: white; border-radius: 10px; text-decoration: none; font-weight: 600;">
+                Go to Restro Page →
+              </a>
+            </div>
+          `;
+          return;
+        }
+
+        // Load menu
+        const menuRes = await fetch(`${API_URL}/menu/by-slug/${slug}`);
+        const menuData = await menuRes.json();
+        if (menuData.success) {
+          menuItems = menuData.data.items;
+          renderMenu(menuData.data.grouped);
+        }
+      } catch (err) {
+        console.error('Init error:', err);
+        document.getElementById('menu-container').innerHTML = '<p style="text-align: center; padding: 40px; color: var(--text-muted);">Unable to load restaurant menu. Please check your connection.</p>';
+      }
+
+      // Check scanned table token or ID parameter from URL (?t=... or ?table=...)
+      const scannedToken = urlParams.get('t') || urlParams.get('table') || urlParams.get('tableId');
+      if (scannedToken) {
+        // Fetch active running order for this table
+        fetch(`${API_URL}/orders/active-table?r=${slug}&t=${encodeURIComponent(scannedToken)}`)
+          .then(r => r.json())
+          .then(res => {
+            const banner = document.getElementById('table-banner');
+            if (res.success && res.data) {
+              activeTableOrder = res.data;
+              if (banner) {
+                banner.innerHTML = `📍 <strong>${activeTableOrder.assignedTable?.name || 'Table'}</strong> · 🛒 Active Order: <strong>#${activeTableOrder.orderCode} (Total ₹${activeTableOrder.total})</strong>`;
+                banner.style.display = 'flex';
+              }
+              updateCartUI();
+            } else {
+              activeTableOrder = null;
+              if (banner) banner.style.display = 'none';
+              updateCartUI();
+            }
+          })
+          .catch(() => {
+            activeTableOrder = null;
+            const banner = document.getElementById('table-banner');
+            if (banner) banner.style.display = 'none';
+            updateCartUI();
+          });
+      } else {
+        const banner = document.getElementById('table-banner');
+        if (banner) banner.style.display = 'none';
+      }
+
+      // Load available tables for order tab
+      loadAvailableTables();
+    }
+
+    function renderInfo() {
+      const container = document.getElementById('info-container');
+      if (!container || !restaurant) return;
+      container.innerHTML = `
+        <div class="info-card">
+          <h3>📍 Location & Address</h3>
+          <p>${restaurant.address || 'Address not specified'}</p>
+          <p>${restaurant.city || ''} ${restaurant.state || ''} ${restaurant.pincode || ''}</p>
+        </div>
+        <div class="info-card" style="margin-top: 16px;">
+          <h3>🕒 Opening Hours</h3>
+          <p>${restaurant.openingTime || '10:00'} to ${restaurant.closingTime || '23:00'}</p>
+        </div>
+        <div class="info-card" style="margin-top: 16px;">
+          <h3>📞 Contact Information</h3>
+          <p>Phone: ${restaurant.phone || 'N/A'}</p>
+          <p>Email: ${restaurant.email || 'N/A'}</p>
+        </div>
+      `;
+    }
+
+    // ---- Render Menu ----
+    function renderMenu(grouped) {
+      const container = document.getElementById('menu-container');
+      let html = '';
+
+      for (const [category, items] of Object.entries(grouped)) {
+        html += `<div class="category-title">${category}</div>`;
+        for (const item of items) {
+          const imgHtml = item.imageUrl
+            ? `<img src="${item.imageUrl}" alt="${item.name}" style="width: 60px; height: 60px; border-radius: 10px; object-fit: cover; flex-shrink: 0;" />`
+            : '';
+
+          let actionButtonsHtml = '';
+          if (item.priceHalf) {
+            actionButtonsHtml = `
+              <div style="display: flex; flex-direction: column; gap: 6px; align-items: flex-end;">
+                <div style="display: flex; align-items: center; gap: 6px;">
+                  <span style="font-size: 0.8rem; color: var(--text-sec);">Half: ₹${Number(item.priceHalf)}</span>
+                  <button class="add-btn" style="padding: 3px 8px; font-size: 0.75rem;" onclick="addToCart('${item.id}', 'Half', ${Number(item.priceHalf)})">+ Half</button>
+                </div>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                  <span class="price" style="font-size: 0.88rem;">Full: ₹${Number(item.price)}</span>
+                  <button class="add-btn" style="padding: 3px 8px; font-size: 0.75rem;" onclick="addToCart('${item.id}', 'Full', ${Number(item.price)})">+ Full</button>
+                </div>
+              </div>
+            `;
+          } else {
+            actionButtonsHtml = `
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <span class="price">₹${Number(item.price)}</span>
+                <button class="add-btn" onclick="addToCart('${item.id}', 'Full', ${Number(item.price)})">ADD</button>
+              </div>
+            `;
+          }
+
+          html += `
+            <div class="menu-item" style="display: flex; gap: 12px; align-items: center;">
+              ${imgHtml}
+              <div style="flex: 1;">
+                <div class="name">
+                  <span class="veg-badge ${item.isVeg ? 'veg' : 'nonveg'}"></span>
+                  ${item.name}
+                </div>
+                ${item.description ? `<div class="desc">${item.description}</div>` : ''}
+              </div>
+              ${actionButtonsHtml}
+            </div>
+          `;
+        }
+      }
+
+      container.innerHTML = html || '<p style="text-align: center; padding: 40px; color: var(--text-muted);">No menu items available.</p>';
+    }
+
+    // ---- Cart Functions ----
+    function addToCart(itemId, portion = 'Full', customPrice) {
+      const item = menuItems.find(m => m.id === itemId);
+      if (!item) return;
+
+      const price = customPrice !== undefined ? customPrice : (portion === 'Half' && item.priceHalf ? Number(item.priceHalf) : Number(item.price));
+      const displayName = portion === 'Half' ? `${item.name} (Half)` : item.name;
+      const cartKey = `${itemId}-${portion}`;
+
+      const existing = cart.find(c => c.key === cartKey);
+      if (existing) {
+        existing.quantity++;
+      } else {
+        cart.push({ key: cartKey, menuItemId: itemId, name: displayName, portion: portion, price: price, quantity: 1 });
+      }
+
+      updateCartUI();
+    }
+
+    function removeFromCart(cartKey) {
+      const idx = cart.findIndex(c => c.key === cartKey || c.menuItemId === cartKey);
+      if (idx !== -1) {
+        if (cart[idx].quantity > 1) {
+          cart[idx].quantity--;
+        } else {
+          cart.splice(idx, 1);
+        }
+      }
+      updateCartUI();
+    }
+
+    function updateCartUI() {
+      const totalItems = cart.reduce((sum, c) => sum + c.quantity, 0);
+      const totalPrice = cart.reduce((sum, c) => sum + (c.price * c.quantity), 0);
+
+      document.getElementById('cart-count').textContent = totalItems;
+      document.getElementById('cart-total').textContent = totalPrice.toLocaleString();
+
+      const activeTab = document.querySelector('.tab.active')?.getAttribute('data-tab');
+      const cartBar = document.getElementById('cart-bar');
+      cartBar.style.display = (totalItems > 0 && activeTab !== 'order') ? 'flex' : 'none';
+
+      // Render cart items
+      const cartContainer = document.getElementById('cart-items');
+      const cartSummary = document.getElementById('cart-summary');
+
+      let html = '';
+
+      // If customer has an active running order at this table, show the active order items first!
+      if (activeTableOrder) {
+        const items = activeTableOrder.orderItems || [];
+        html += `
+          <div style="background: var(--bg-card); border: 1px solid var(--primary); border-radius: 14px; padding: 20px; margin-bottom: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 8px;">
+              <div>
+                <h3 style="font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; color: var(--primary); margin-bottom: 2px;">
+                  📋 Active Order #${activeTableOrder.orderCode}
+                </h3>
+                <div style="font-size: 0.8rem; color: var(--text-sec);">
+                  📍 ${activeTableOrder.assignedTable?.name || 'Table'} ${activeTableOrder.customerName ? `· ${activeTableOrder.customerName}` : ''}
+                </div>
+              </div>
+              <span style="padding: 6px 14px; border-radius: 20px; background: rgba(255, 107, 53, 0.15); color: var(--primary); font-size: 0.8rem; font-weight: 700; border: 1px solid rgba(255, 107, 53, 0.3);">
+                ${getStatusBadge(activeTableOrder.status)}
+              </span>
+            </div>
+
+            <div style="border-top: 1px dashed var(--border); border-bottom: 1px dashed var(--border); padding: 12px 0; margin-bottom: 14px;">
+              ${items.length > 0 ? items.map(item => `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 0.9rem;">
+                  <div>
+                    <span style="font-weight: 600;">${item.itemName}</span>
+                    ${item.portion ? `<span style="font-size: 0.78rem; color: var(--text-muted);"> (${item.portion})</span>` : ''}
+                    <div style="font-size: 0.78rem; color: var(--text-muted);">₹${item.itemPrice} × ${item.quantity}</div>
+                  </div>
+                  <span style="font-family: var(--font-display); font-weight: 700; color: var(--text);">₹${Number(item.lineTotal || (item.itemPrice * item.quantity)).toFixed(2)}</span>
+                </div>
+              `).join('') : '<p style="font-size: 0.85rem; color: var(--text-muted);">No items found in active order.</p>'}
+            </div>
+
+            <div style="display: flex; justify-content: space-between; font-size: 0.88rem; margin-bottom: 4px; color: var(--text-sec);">
+              <span>Subtotal</span>
+              <span>₹${Number(activeTableOrder.subtotal || 0).toFixed(2)}</span>
+            </div>
+            ${Number(activeTableOrder.gstAmount) > 0 ? `
+              <div style="display: flex; justify-content: space-between; font-size: 0.88rem; margin-bottom: 4px; color: var(--text-sec);">
+                <span>GST Tax</span>
+                <span>₹${Number(activeTableOrder.gstAmount).toFixed(2)}</span>
+              </div>
+            ` : ''}
+            <div style="display: flex; justify-content: space-between; font-weight: 700; font-size: 1.05rem; margin-top: 8px; color: var(--text);">
+              <span>Total Bill Amount</span>
+              <span style="color: var(--primary);">₹${Number(activeTableOrder.total || 0).toFixed(2)}</span>
+            </div>
+          </div>
+        `;
+      }
+
+      if (cart.length === 0) {
+        if (activeTableOrder) {
+          html += `
+            <div style="text-align: center; padding: 20px; background: var(--bg-secondary); border-radius: 12px; border: 1px dashed var(--border); margin-bottom: 20px;">
+              <p style="font-size: 0.88rem; color: var(--text-sec); margin-bottom: 12px;">
+                💡 Want to order additional items to your table?
+              </p>
+              <button class="add-btn" style="padding: 8px 20px; font-size: 0.85rem;" onclick="switchTab('menu')">
+                📖 Browse Menu & Add Items
+              </button>
+            </div>
+          `;
+          cartContainer.innerHTML = html;
+          cartSummary.style.display = 'none';
+          return;
+        } else {
+          cartContainer.innerHTML = '<p style="text-align: center; padding: 40px; color: var(--text-muted);">Your cart is empty. Add items from the menu!</p>';
+          cartSummary.style.display = 'none';
+          return;
+        }
+      }
+
+      if (activeTableOrder) {
+        html += `<h4 style="font-family: var(--font-display); font-weight: 700; margin-bottom: 12px; color: var(--text);">➕ New Items to Add to Order</h4>`;
+      }
+
+      cartSummary.style.display = 'block';
+      document.getElementById('cart-subtotal').textContent = `₹${totalPrice.toLocaleString()}`;
+
+      for (const item of cart) {
+        html += `
+          <div class="menu-item">
+            <div style="flex: 1;">
+              <div class="name">${item.name}</div>
+              <div class="desc">₹${item.price} × ${item.quantity}</div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <button class="add-btn" style="padding: 4px 10px; background: var(--bg-secondary); border: 1px solid var(--border);" onclick="removeFromCart('${item.key}')">−</button>
+              <span style="font-weight: 600; min-width: 20px; text-align: center;">${item.quantity}</span>
+              <button class="add-btn" style="padding: 4px 10px;" onclick="addToCart('${item.menuItemId}', '${item.portion}', ${item.price})">+</button>
+              <span class="price" style="margin-left: 8px;">₹${(item.price * item.quantity).toLocaleString()}</span>
+            </div>
+          </div>
+        `;
+      }
+
+      const nameGroup = document.getElementById('customer-name-group');
+      const phoneGroup = document.getElementById('customer-phone-group');
+      const activeInfo = document.getElementById('active-customer-info');
+
+      if (activeTableOrder && activeTableOrder.customerName) {
+        if (nameGroup) nameGroup.style.display = 'none';
+        if (phoneGroup) phoneGroup.style.display = 'none';
+        if (activeInfo) {
+          activeInfo.style.display = 'block';
+          document.getElementById('active-customer-name').textContent = activeTableOrder.customerName;
+          document.getElementById('active-customer-phone').textContent = activeTableOrder.customerPhone || '';
+          document.getElementById('active-order-code').textContent = '#' + activeTableOrder.orderCode;
+        }
+        if (document.getElementById('order-name')) document.getElementById('order-name').value = activeTableOrder.customerName;
+        if (document.getElementById('order-phone')) document.getElementById('order-phone').value = activeTableOrder.customerPhone || '';
+      } else {
+        if (nameGroup) nameGroup.style.display = 'block';
+        if (phoneGroup) phoneGroup.style.display = 'block';
+        if (activeInfo) activeInfo.style.display = 'none';
+      }
+
+      const submitBtn = document.querySelector('#tab-order .btn-submit');
+      if (submitBtn) {
+        submitBtn.textContent = activeTableOrder
+          ? `➕ Add Items to Order #${activeTableOrder.orderCode}`
+          : 'Place Order';
+      }
+
+      cartContainer.innerHTML = html;
+    }
+
+    // ---- Place Order ----
+    async function placeOrder() {
+      let name = document.getElementById('order-name').value;
+      let phone = document.getElementById('order-phone').value.replace(/\D/g, '');
+
+      if (activeTableOrder) {
+        name = activeTableOrder.customerName || name;
+        phone = activeTableOrder.customerPhone || phone;
+      }
+
+      const scannedToken = urlParams.get('t') || urlParams.get('table') || urlParams.get('tableId');
+
+      if (!name || !phone) {
+        alert('Please enter your name and phone number.');
+        return;
+      }
+
+      if (phone.length !== 10) {
+        alert('Phone number must be exactly 10 digits.');
+        return;
+      }
+
+      if (cart.length === 0) {
+        alert('Your cart is empty.');
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_URL}/orders/create?r=${slug}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            customerName: name,
+            customerPhone: phone,
+            items: cart.map(c => ({ menuItemId: c.menuItemId, portion: c.portion, quantity: c.quantity })),
+            promoCode: document.getElementById('promo-code').value || undefined,
+            tableId: scannedToken || (activeTableOrder ? activeTableOrder.assignedTableId : undefined),
+            source: 'website',
+          }),
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          cart = [];
+          const tableName = data.data.assignedTable ? data.data.assignedTable.name : 'Auto-assigned';
+          document.getElementById('order-code-display').textContent = data.data.orderCode;
+          
+          if (data.isMerged) {
+            const modalTitle = document.querySelector('#order-modal h2');
+            if (modalTitle) modalTitle.textContent = '✅ Items Added to Table Order!';
+          }
+
+          const banner = document.getElementById('table-banner');
+          if (banner && data.data) {
+            banner.innerHTML = `📍 <strong>${tableName}</strong> · 🛒 Active Order: <strong>#${data.data.orderCode} (Total ₹${data.data.total})</strong>`;
+            banner.style.display = 'flex';
+          }
+
+          activeTableOrder = data.data;
+          updateCartUI();
+          showModal('order-modal');
+        } else {
+          alert(data.message || 'Error placing order.');
+        }
+      } catch (err) {
+        alert('Error placing order. Please try again.');
+      }
+    }
+
+    // ---- Load Available Tables ----
+    async function loadAvailableTables() {
+      try {
+        const res = await fetch(`${API_URL}/tables/available?r=${slug}`);
+        const data = await res.json();
+        const select = document.getElementById('order-table');
+        const msg = document.getElementById('table-status-msg');
+        if (!select) return;
+
+        select.innerHTML = '<option value="">Auto-assign (system picks best table)</option>';
+
+        if (data.allBooked || data.data.length === 0) {
+          msg.innerHTML = '⚠️ <span style="color: #EF4444; font-weight: 600;">All tables are currently occupied. Your order will be queued.</span>';
+          select.innerHTML = '<option value="">No tables available — order will be queued</option>';
+        } else {
+          msg.innerHTML = `✅ ${data.totalAvailable} table(s) available`;
+          // Group by section
+          const sections = {};
+          data.data.forEach(t => {
+            if (!sections[t.section]) sections[t.section] = [];
+            sections[t.section].push(t);
+          });
+          for (const [section, tables] of Object.entries(sections)) {
+            const group = document.createElement('optgroup');
+            group.label = section;
+            tables.forEach(t => {
+              const opt = document.createElement('option');
+              opt.value = t.id;
+              opt.textContent = `${t.name} (${t.capacity} seats)`;
+              group.appendChild(opt);
+            });
+            select.appendChild(group);
+          }
+        }
+      } catch (e) {
+        console.error('Failed to load tables:', e);
+      }
+    }
+
+    // ---- Validate Promo ----
+    async function validatePromo() {
+      const code = document.getElementById('promo-code').value;
+      if (!code) return;
+
+      try {
+        const subtotal = cart.reduce((sum, c) => sum + (c.price * c.quantity), 0);
+        const res = await fetch(`${API_URL}/promos/validate?r=${slug}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code, orderAmount: subtotal }),
+        });
+        const data = await res.json();
+        if (data.success && data.data.valid) {
+          alert(`Promo applied! You save ₹${data.data.amount}`);
+        } else {
+          alert(data.data?.message || 'Invalid promo code.');
+        }
+      } catch (err) {
+        alert('Could not validate promo code.');
+      }
+    }
+
+    // ---- Render Info ----
+    function renderInfo() {
+      if (!restaurant) return;
+      const container = document.getElementById('info-container');
+      let logoCardHtml = '';
+      if (restaurant.logoUrl) {
+        logoCardHtml = `
+          <div style="text-align: center; margin-bottom: 20px; padding: 24px; background: var(--bg-card); border-radius: 16px; border: 1px solid var(--border);">
+            <img src="${restaurant.logoUrl}" alt="${restaurant.name}" style="width: 84px; height: 84px; border-radius: 18px; object-fit: cover; border: 2px solid var(--primary-glow); margin-bottom: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.4);">
+            <h2 style="font-family: var(--font-display); font-size: 1.3rem; font-weight: 700;">${restaurant.name}</h2>
+            ${restaurant.tagline ? `<p style="color: var(--text-sec); font-size: 0.85rem; margin-top: 4px;">${restaurant.tagline}</p>` : ''}
+          </div>
+        `;
+      }
+      container.innerHTML = `
+        ${logoCardHtml}
+        <div class="info-card">
+          <h3>📍 Address</h3>
+          <p>${restaurant.address || 'Not provided'}${restaurant.city ? `, ${restaurant.city}` : ''}${restaurant.state ? `, ${restaurant.state}` : ''}</p>
+        </div>
+        <div class="info-card">
+          <h3>🕐 Operating Hours</h3>
+          <p>${restaurant.openingTime || '10:00'} AM - ${restaurant.closingTime || '23:00'} PM</p>
+        </div>
+        <div class="info-card">
+          <h3>📞 Contact</h3>
+          <p>${restaurant.phone || 'Not provided'}</p>
+        </div>
+        ${restaurant.cuisineType ? `<div class="info-card"><h3>🍳 Cuisine</h3><p>${restaurant.cuisineType}</p></div>` : ''}
+        ${restaurant.description ? `<div class="info-card"><h3>📝 About</h3><p>${restaurant.description}</p></div>` : ''}
+        <div style="text-align: center; padding: 20px; font-size: 0.78rem; color: var(--text-muted);">
+          Powered by <strong>DineBoard</strong> — dineboard.in
+        </div>
+      `;
+    }
+
+    // ---- Tab Switching ----
+    function switchTab(tab) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
+      document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+      document.getElementById(`tab-${tab}`).style.display = 'block';
+
+      const totalItems = cart.reduce((sum, c) => sum + c.quantity, 0);
+      const cartBar = document.getElementById('cart-bar');
+      if (cartBar) {
+        cartBar.style.display = (totalItems > 0 && tab !== 'order') ? 'flex' : 'none';
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ---- Modal ----
+    function showModal(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.add('show');
+    }
+    function closeModal(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.remove('show');
+    }
+
+    // ---- Init ----
+    init();
+  </script>
+</body>
+</html>

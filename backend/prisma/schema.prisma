@@ -1,0 +1,397 @@
+// ============================================
+// DineBoard — Prisma Schema
+// Multi-Tenant SaaS Restaurant Management
+// ============================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// PLATFORM TABLES (Not tenant-scoped)
+// ============================================
+
+model SubscriptionPlan {
+  id                String   @id @default(uuid())
+  name              String   // Basic, Pro, Enterprise
+  monthlyPrice      Decimal  @map("monthly_price")
+  yearlyPrice       Decimal  @map("yearly_price")
+  commissionRate    Decimal  @map("commission_rate") // % per order
+  bookingCommission Decimal  @map("booking_commission") // % per booking
+  maxTables         Int      @map("max_tables")
+  maxStaff          Int      @map("max_staff")
+  maxMenuItems      Int      @map("max_menu_items")
+  features          Json     @default("{}") // AI chatbot, reports, etc.
+  isActive          Boolean  @default(true) @map("is_active")
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  tenants Tenant[]
+
+  @@map("subscription_plans")
+}
+
+model SuperAdmin {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  name         String
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@map("super_admins")
+}
+
+// ============================================
+// TENANT (RESTAURANT) TABLE
+// ============================================
+
+model Tenant {
+  id                     String   @id @default(uuid())
+  name                   String
+  slug                   String   @unique
+  logoUrl                String?  @map("logo_url")
+  phone                  String?
+  email                  String?
+  whatsappNumber         String?  @map("whatsapp_number")
+  metaPhoneNumberId      String?  @map("meta_phone_id")
+  metaAccessToken        String?  @map("meta_access_token")
+  address                String?
+  city                   String?
+  state                  String?
+  pincode                String?
+  gstNumber              String?  @map("gst_number")
+  openingTime            String?  @map("opening_time") // "09:00"
+  closingTime            String?  @map("closing_time") // "23:00"
+  primaryColor           String   @default("#FF6B35") @map("primary_color")
+  tagline                String?
+  description            String?
+  cuisineType            String?  @map("cuisine_type")
+  bookingSlotMinutes     Int      @default(60) @map("booking_slot_minutes")
+  diningMinutes          Int      @default(45) @map("dining_minutes")
+  cleaningMinutes        Int      @default(15) @map("cleaning_minutes")
+  paymentConfig          Json?    @map("payment_config") // Own Razorpay keys
+  bankDetails            Json?    @map("bank_details") // Account Holder, Acc #, IFSC Code, Bank Name, UPI ID
+  usesOwnRazorpay        Boolean  @default(false) @map("uses_own_razorpay")
+  disableMasterRazorpay  Boolean  @default(false) @map("disable_master_razorpay")
+  subscriptionPlanId     String?  @map("subscription_plan_id")
+  razorpaySubscriptionId String?  @map("razorpay_subscription_id")
+  razorpayLinkedAccountId String? @map("razorpay_linked_account_id")
+  status                 String   @default("trial") // active, suspended, trial, expired
+  trialEndsAt            DateTime? @map("trial_ends_at")
+  createdAt              DateTime @default(now()) @map("created_at")
+  updatedAt              DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  subscriptionPlan    SubscriptionPlan?    @relation(fields: [subscriptionPlanId], references: [id])
+  staff               Staff[]
+  menuItems           MenuItem[]
+  tables              Table[]
+  bookings            Booking[]
+  orders              Order[]
+  promoCodes          PromoCode[]
+  invoices            Invoice[]
+  platformCommissions PlatformCommission[]
+  aiConversationLogs  AiConversationLog[]
+  paymentSettlements  PaymentSettlement[]
+
+  @@map("tenants")
+}
+
+// ============================================
+// STAFF TABLE
+// ============================================
+
+model Staff {
+  id               String    @id @default(uuid())
+  tenantId         String    @map("tenant_id")
+  name             String
+  email            String    @unique
+  phone            String?
+  passwordHash     String    @map("password_hash")
+  role             String    // owner, manager, waiter, chef, cashier
+  isActive         Boolean   @default(true) @map("is_active")
+  emailVerified    Boolean   @default(false) @map("email_verified")
+  otpCode          String?   @map("otp_code")
+  otpExpiry        DateTime? @map("otp_expiry")
+  resetToken       String?   @map("reset_token")
+  resetTokenExpiry DateTime? @map("reset_token_expiry")
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@map("staff")
+}
+
+// ============================================
+// MENU ITEMS TABLE
+// ============================================
+
+model MenuItem {
+  id          String   @id @default(uuid())
+  tenantId    String   @map("tenant_id")
+  name        String
+  description String?
+  price       Decimal
+  priceHalf   Decimal? @map("price_half")
+  category    String   // Starters, Main Course, Desserts, Beverages, etc.
+  isVeg       Boolean  @default(true) @map("is_veg")
+  isAvailable Boolean  @default(true) @map("is_available")
+  sortOrder   Int      @default(0) @map("sort_order")
+  imageUrl    String?  @map("image_url")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  tenant     Tenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  orderItems OrderItem[]
+
+  @@map("menu_items")
+}
+
+// ============================================
+// TABLES
+// ============================================
+
+model Table {
+  id        String   @id @default(uuid())
+  tenantId  String   @map("tenant_id")
+  name      String   // Table 1, VIP Booth, etc.
+  capacity  Int
+  section   String   @default("Indoor") // Indoor, Outdoor, Rooftop, etc.
+  isActive  Boolean  @default(true) @map("is_active")
+  status    String   @default("available") // available, occupied, reserved, cleaning
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  tenant        Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  bookingTables BookingTable[]
+  orders        Order[]
+
+  @@map("tables")
+}
+
+// ============================================
+// BOOKINGS
+// ============================================
+
+model Booking {
+  id            String   @id @default(uuid())
+  tenantId      String   @map("tenant_id")
+  bookingCode   String   @unique @map("booking_code")
+  bookingDate   DateTime @map("booking_date")
+  bookingTime   String   @map("booking_time") // "19:00"
+  endTime       String   @map("end_time")     // "20:00" auto-calculated
+  guests        Int
+  customerName  String   @map("customer_name")
+  customerPhone String   @map("customer_phone")
+  customerEmail String?  @map("customer_email")
+  note          String?
+  source        String   @default("website") // website, whatsapp
+  status        String   @default("confirmed") // confirmed, cancelled, completed, no-show
+  discountAmount Decimal  @default(0) @map("discount_amount")
+  promoCodeUsed String?  @map("promo_code_used")
+  reminder1Sent Boolean  @default(false) @map("reminder1_sent") // 1hr reminder
+  reminder2Sent Boolean  @default(false) @map("reminder2_sent") // 30min reminder
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  tenant        Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  bookingTables BookingTable[]
+  orders        Order[]
+
+  @@map("bookings")
+}
+
+model BookingTable {
+  id        String @id @default(uuid())
+  bookingId String @map("booking_id")
+  tableId   String @map("table_id")
+
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  table   Table   @relation(fields: [tableId], references: [id], onDelete: Cascade)
+
+  @@unique([bookingId, tableId])
+  @@map("booking_tables")
+}
+
+// ============================================
+// ORDERS
+// ============================================
+
+model Order {
+  id              String   @id @default(uuid())
+  tenantId        String   @map("tenant_id")
+  orderCode       String   @unique @map("order_code")
+  bookingId       String?  @map("booking_id")
+  customerName    String   @map("customer_name")
+  customerPhone   String   @map("customer_phone")
+  note            String?
+  source          String   @default("website") // website, whatsapp
+  status          String   @default("pending") // pending, confirmed, preparing, ready, served, billed, paid
+  subtotal        Decimal  @default(0)
+  discountAmount  Decimal  @default(0) @map("discount_amount")
+  gstAmount       Decimal  @default(0) @map("gst_amount")
+  total           Decimal  @default(0)
+  promoCodeUsed   String?  @map("promo_code_used")
+  assignedTableId String?  @map("assigned_table_id")
+  paymentInfo     Json?    @map("payment_info")
+  paymentLinkId   String?  @map("payment_link_id")
+  paymentLinkUrl  String?  @map("payment_link_url")
+  isRepeat        Boolean  @default(false) @map("is_repeat")
+  paidAt          DateTime? @map("paid_at")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  tenant        Tenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  booking       Booking?   @relation(fields: [bookingId], references: [id])
+  assignedTable Table?     @relation(fields: [assignedTableId], references: [id])
+  orderItems    OrderItem[]
+  invoice       Invoice?
+  commission    PlatformCommission?
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id         String   @id @default(uuid())
+  orderId    String   @map("order_id")
+  menuItemId String   @map("menu_item_id")
+  itemName   String   @map("item_name")   // Snapshot at order time
+  itemPrice  Decimal  @map("item_price")  // Snapshot at order time
+  portion    String?  @default("Full")
+  quantity   Int
+  lineTotal  Decimal  @map("line_total")
+  isExtra    Boolean  @default(false) @map("is_extra")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  order    Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  menuItem MenuItem @relation(fields: [menuItemId], references: [id])
+
+  @@map("order_items")
+}
+
+// ============================================
+// PROMO CODES
+// ============================================
+
+model PromoCode {
+  id             String   @id @default(uuid())
+  tenantId       String   @map("tenant_id")
+  code           String
+  discountType   String   @map("discount_type") // percentage, flat
+  discountValue  Decimal  @map("discount_value")
+  minOrderAmount Decimal  @default(0) @map("min_order_amount")
+  validFrom      DateTime @map("valid_from")
+  validUntil     DateTime @map("valid_until")
+  maxUses        Int      @default(100) @map("max_uses")
+  usedCount      Int      @default(0) @map("used_count")
+  isActive       Boolean  @default(true) @map("is_active")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, code])
+  @@map("promo_codes")
+}
+
+// ============================================
+// INVOICES
+// ============================================
+
+model Invoice {
+  id            String   @id @default(uuid())
+  tenantId      String   @map("tenant_id")
+  orderId       String   @unique @map("order_id")
+  invoiceNumber String   @unique @map("invoice_number")
+  subtotal      Decimal
+  cgst          Decimal  @default(0) // Central GST
+  sgst          Decimal  @default(0) // State GST
+  igst          Decimal  @default(0) // Interstate GST
+  total         Decimal
+  gstNumber     String?  @map("gst_number") // Snapshot of restaurant's GST
+  pdfUrl        String?  @map("pdf_url")
+  generatedAt   DateTime @default(now()) @map("generated_at")
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  order  Order  @relation(fields: [orderId], references: [id])
+
+  @@map("invoices")
+}
+
+// ============================================
+// PLATFORM COMMISSIONS
+// ============================================
+
+model PlatformCommission {
+  id                String   @id @default(uuid())
+  tenantId          String   @map("tenant_id")
+  orderId           String?  @unique @map("order_id")
+  bookingId         String?  @map("booking_id")
+  type              String   // order_commission, booking_commission
+  transactionAmount Decimal  @map("transaction_amount")
+  commissionRate    Decimal  @map("commission_rate")
+  commissionAmount  Decimal  @map("commission_amount")
+  collectionMethod  String   @map("collection_method") // razorpay_route, invoice
+  status            String   @default("pending") // pending, collected, invoiced
+  collectedAt       DateTime? @map("collected_at")
+  createdAt         DateTime @default(now()) @map("created_at")
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  order  Order? @relation(fields: [orderId], references: [id])
+
+  @@map("platform_commissions")
+}
+
+// ============================================
+// AI CONVERSATION LOGS
+// ============================================
+
+model AiConversationLog {
+  id              String   @id @default(uuid())
+  tenantId        String   @map("tenant_id")
+  customerPhone   String   @map("customer_phone")
+  messageIn       String   @map("message_in")
+  messageOut      String   @map("message_out")
+  detectedIntent  String?  @map("detected_intent")
+  confidenceScore Float?   @map("confidence_score")
+  context         Json?    // Conversation memory snapshot
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@map("ai_conversation_logs")
+}
+
+// ============================================
+// PAYMENT SETTLEMENTS
+// ============================================
+
+model PaymentSettlement {
+  id                   String    @id @default(uuid())
+  tenantId             String    @map("tenant_id")
+  settlementCode       String    @unique @map("settlement_code")
+  settlementDate       DateTime  @default(now()) @map("settlement_date")
+  cashTotal            Decimal   @map("cash_total")
+  razorpayTotal        Decimal   @map("razorpay_total")
+  grandTotal           Decimal   @map("grand_total")
+  orderCount           Int       @map("order_count")
+  status               String    @default("completed") // completed, pending
+  bankSettlementId     String?   @map("bank_settlement_id")
+  bankSettlementStatus String    @default("pending") @map("bank_settlement_status") // pending, transferred
+  bankSettledAmount    Decimal   @default(0) @map("bank_settled_amount")
+  bankSettledAt        DateTime? @map("bank_settled_at")
+  utrNumber            String?   @map("utr_number")
+  settledBy            String?   @map("settled_by")
+  notes                String?
+  createdAt            DateTime  @default(now()) @map("created_at")
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@map("payment_settlements")
+}

@@ -1,0 +1,41 @@
+
+please read all the point and Think like senior software engineer with market research on competitors  products and their features and based on that u have to make a proper realiable product as per the market trend, these are my point that should inpliment in product.
+first only create system architecture and expained working saas product.
+
+1) I wanted to make a web saas based resturant management system. 
+
+a) for payment please use razar pay for subscription and comision both and restaurant should has option to add their onw payment method either they can use razorpay its totly depend on resto owner 
+b)this will subscription based the first one is subscription plans and the second one is comision based on every order + table booking 
+
+2) customer can order through tenant created resto(point 6) or by send whatsapp msg also
+
+3) Multi tenant system so every restaurant should be seprated
+
+4) customer wanted to book table so backend check availability of table with their time and date  if nothign then  system suggest available  table for same data with resto owner contact details, this shuld be show in both web and whatsapp booking .
+5)if customer order menu through both way web+whatsapp chat the system automatic assign the avaible table if suppose not anailable the you get msg for conetct owner.
+6) this appication should have multi-tenant architecture 
+
+i have index.html page for tenant you just modified that according to as per requirement. 
+
+a) Tenant should be able to create his restaurant (logo + resto name etc)
+b)Tenant should be able to add tables 
+c)Tenant should be able to add menu 
+d)tenant has option add their resto option timimng 
+e)Tenant should be able to add booking 
+f) tenant has their own restaurant admin panel login
+g) tenant has option to change siting combition and table booked status(availability).
+h) tenant has option to give discount on order and table booking 
+i) tenant has option to give promo code
+j) tenant has option to add staff and their role (waiter, manager, chef, cashier)
+k) tenant has option to check and modified customer bill and manully send this customer
+l)tenant can add their gst details on invoice if they add so invoice will show gst. 
+
+7) some time whats happed suppose customer get their food and he want to add so he can add and he can add.  
+8) payment link automatic recived to customer if they ask for bill (whatspp msg + web has option to bill also)
+9) cutomer can get their bill by the just sending whatsapp msg also he has option to get thier from web also
+10) customer not require to login or register to order and book table from restaurant
+11) customer get reminder on whatsapp before 1 hour of booking time and 30min before also. 
+12) if customer order or book table thorugh web or whatsapp , customer can get notification on their whatspp(like - order booked and table booked etc with all relevent details)
+13) Reports of everythings evryone can get it from web or through whatsapp by sending msg(if restaurant owner asked though their resturant reg whatsapp that system give the same in pdf formate)
+14) in whatsapp chatbot cutomer can ask about resto details and releted detail chatbot should answer that thing.
+15) for table booking i want 60min booking slot 45 min for dining and 15 min cleaning , but resto-owner should have option to change this according to their requirement.

@@ -1,0 +1,107 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: dineboard-postgres
+    restart: unless-stopped
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_DB: dineboard
+      POSTGRES_USER: dineboard_user
+      POSTGRES_PASSWORD: dineboard_dev_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/prisma/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U dineboard_user -d dineboard']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Cache & Queue
+  redis:
+    image: redis:7-alpine
+    container_name: dineboard-redis
+    restart: unless-stopped
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend API Server
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: dineboard-api
+    restart: unless-stopped
+    ports:
+      - '4000:4000'
+    environment:
+      NODE_ENV: development
+      PORT: 4000
+      DATABASE_URL: postgresql://dineboard_user:dineboard_dev_password@postgres:5432/dineboard
+      REDIS_URL: redis://redis:6379
+      APP_URL: http://localhost:3000
+      API_URL: http://localhost:4000
+    env_file:
+      - ./backend/.env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./backend/src:/app/src
+      - ./backend/prisma:/app/prisma
+      - ./frontend/customer:/app/frontend/customer
+
+  # Background Worker
+  worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.worker
+    container_name: dineboard-worker
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://dineboard_user:dineboard_dev_password@postgres:5432/dineboard
+      REDIS_URL: redis://redis:6379
+    env_file:
+      - ./backend/.env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./backend/src:/app/src
+
+  # Next.js Frontend
+  web:
+    build:
+      context: ./frontend/web
+      dockerfile: Dockerfile
+    container_name: dineboard-web
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:4000/api
+    depends_on:
+      - api
+    volumes:
+      - ./frontend/web/src:/app/src
+      - ./frontend/web/public:/app/public
+
+volumes:
+  postgres_data:
+  redis_data:

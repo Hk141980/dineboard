@@ -1,0 +1,49 @@
+{
+  "name": "dineboard-backend",
+  "version": "1.0.0",
+  "description": "DineBoard — Multi-Tenant SaaS Restaurant Management System API",
+  "main": "src/app.js",
+  "scripts": {
+    "dev": "nodemon src/app.js",
+    "start": "node src/app.js",
+    "worker": "node src/jobs/worker.js",
+    "worker:dev": "nodemon src/jobs/worker.js",
+    "db:generate": "npx prisma generate",
+    "db:push": "npx prisma db push",
+    "db:migrate": "npx prisma migrate dev",
+    "db:seed": "node prisma/seed.js",
+    "db:studio": "npx prisma studio",
+    "test": "jest",
+    "test:unit": "jest --testPathPattern=tests/unit",
+    "test:integration": "jest --testPathPattern=tests/integration"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.600.0",
+    "@google/generative-ai": "^0.21.0",
+    "@prisma/client": "^5.22.0",
+    "bcryptjs": "^2.4.3",
+    "bullmq": "^5.25.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "express-rate-limit": "^7.4.0",
+    "helmet": "^7.2.0",
+    "ioredis": "^5.4.1",
+    "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.2",
+    "nodemailer": "^9.0.3",
+    "pdfkit": "^0.15.0",
+    "razorpay": "^2.9.4",
+    "uuid": "^10.0.0",
+    "validator": "^13.12.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.7",
+    "prisma": "^5.22.0"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
+  }
+}

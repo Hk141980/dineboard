@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Online Table Reservation | DineBoard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    @keyframes pulse-subtle {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.85; transform: scale(0.98); }
+    }
+    .animate-pulse-subtle { animation: pulse-subtle 3s ease-in-out infinite; }
+  </style>
+</head>
+<body class="bg-[#030712] text-slate-100 font-sans min-h-screen flex flex-col justify-between selection:bg-emerald-500 selection:text-white relative overflow-x-hidden">
+  
+  <!-- Background Glow Orbs -->
+  <div class="fixed -top-40 -left-40 w-96 h-96 bg-emerald-600/15 rounded-full blur-3xl pointer-events-none"></div>
+  <div class="fixed top-1/2 -right-40 w-96 h-96 bg-teal-600/10 rounded-full blur-3xl pointer-events-none"></div>
+
+  <!-- Header -->
+  <header class="border-b border-slate-800/80 bg-slate-900/70 backdrop-blur-xl sticky top-0 z-50 px-4 py-3.5 shadow-xl">
+    <div class="max-w-md mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div id="restroLogo" class="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-400 via-emerald-600 to-teal-700 flex items-center justify-center font-extrabold text-xl text-white shadow-lg shadow-emerald-950/50 border border-emerald-400/30">
+          R
+        </div>
+        <div>
+          <h1 id="restroName" class="font-bold text-base text-white leading-tight tracking-tight">Restro</h1>
+          <p class="text-[11px] text-slate-400 flex items-center gap-1 font-medium">
+            <span>✨ Table Reservations</span>
+          </p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-full">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+        <span class="text-xs text-emerald-400 font-semibold tracking-wide">Open Now</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="max-w-md mx-auto w-full px-4 py-6 flex-1 relative z-10">
+    
+    <!-- Success Confirmation Card -->
+    <div id="successCard" class="hidden bg-slate-900/90 border border-emerald-500/30 rounded-3xl p-6 shadow-2xl backdrop-blur-2xl text-center space-y-6 animate-pulse-subtle">
+      <div class="w-20 h-20 bg-gradient-to-br from-emerald-500/20 to-teal-500/10 border border-emerald-500/30 rounded-full flex items-center justify-center mx-auto text-4xl shadow-inner">
+        🎉
+      </div>
+      <div>
+        <span class="inline-block px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold rounded-full mb-2 uppercase tracking-wider">
+          Reservation Confirmed
+        </span>
+        <h2 class="text-2xl font-black text-white tracking-tight">Table Reserved!</h2>
+        <p class="text-xs text-slate-400 mt-1">We look forward to serving you.</p>
+      </div>
+
+      <div class="bg-slate-950/80 border border-slate-800 rounded-2xl p-4 text-left space-y-3 text-sm">
+        <div class="flex justify-between items-center border-b border-slate-800/80 pb-2.5">
+          <span class="text-xs text-slate-400 font-medium">Booking Code:</span>
+          <div class="flex items-center gap-2">
+            <span id="resCode" class="font-mono font-bold text-emerald-400 bg-emerald-950/50 px-2.5 py-1 rounded-lg border border-emerald-500/30 text-sm">BKG-XXXX</span>
+          </div>
+        </div>
+        <div class="flex justify-between border-b border-slate-800/80 pb-2.5">
+          <span class="text-xs text-slate-400 font-medium">Date & Time:</span>
+          <span id="resDateTime" class="font-semibold text-white text-xs">Today at 19:30</span>
+        </div>
+        <div class="flex justify-between border-b border-slate-800/80 pb-2.5">
+          <span class="text-xs text-slate-400 font-medium">Party Size:</span>
+          <span id="resGuests" class="font-semibold text-white text-xs">2 Guests</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-xs text-slate-400 font-medium">Customer Name:</span>
+          <span id="resName" class="font-semibold text-white text-xs">Himanshu</span>
+        </div>
+      </div>
+
+      <div class="p-3 bg-emerald-500/5 border border-emerald-500/20 rounded-xl text-left flex items-start gap-2.5">
+        <span class="text-base">📱</span>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          Confirmation ticket has been sent to your WhatsApp number.
+        </p>
+      </div>
+
+      <button onclick="location.reload()" class="w-full py-3.5 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-2xl transition shadow-lg text-sm border border-slate-700">
+        Book Another Table
+      </button>
+    </div>
+
+    <!-- Booking Form Card -->
+    <form id="bookingForm" onsubmit="submitForm(event)" class="bg-slate-900/80 border border-slate-800/80 rounded-3xl p-5 shadow-2xl backdrop-blur-2xl space-y-5">
+      
+      <div>
+        <h2 class="text-xl font-extrabold text-white tracking-tight">Reserve Your Table</h2>
+        <p class="text-xs text-slate-400 mt-0.5">Select guests, date, and preferred time slot.</p>
+      </div>
+
+      <!-- Error Alert -->
+      <div id="errorAlert" class="hidden p-3.5 bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs rounded-2xl flex items-center gap-2.5">
+        <span class="text-base">⚠️</span> <span id="errorMsg" class="font-medium">Error message</span>
+      </div>
+
+      <!-- Guest Count Selection & Custom Entry -->
+      <div>
+        <div class="flex justify-between items-center mb-2">
+          <label class="text-xs font-bold text-slate-300 uppercase tracking-wider">Number of Guests</label>
+          <span id="guestCountBadge" class="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20">2 Guests</span>
+        </div>
+
+        <!-- Custom Guest Counter & Entry Box -->
+        <div class="flex items-center gap-2 bg-slate-950/90 border border-slate-800 rounded-2xl p-1.5">
+          <button type="button" onclick="adjustGuestCount(-1)" class="w-10 h-10 rounded-xl bg-slate-900 text-slate-300 font-extrabold text-lg hover:bg-slate-800 transition border border-slate-700/80 flex items-center justify-center active:scale-95">-</button>
+          
+          <div class="flex-1 flex items-center justify-center gap-2">
+            <span class="text-xs text-slate-400 font-medium">Enter Guests:</span>
+            <input type="number" id="guestInput" min="1" max="50" value="2" oninput="onGuestInputChange(this.value)" class="w-16 text-center bg-slate-900 border border-slate-700/80 rounded-xl text-emerald-400 font-extrabold text-base py-1.5 focus:outline-none focus:border-emerald-500" />
+            <span class="text-xs text-slate-400 font-medium">Guests</span>
+          </div>
+          
+          <button type="button" onclick="adjustGuestCount(1)" class="w-10 h-10 rounded-xl bg-emerald-500 text-white font-extrabold text-lg hover:bg-emerald-400 transition shadow-md shadow-emerald-950/50 flex items-center justify-center active:scale-95">+</button>
+        </div>
+      </div>
+
+      <!-- Date Selector Segment Control -->
+      <div>
+        <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Select Date</label>
+        <div class="grid grid-cols-3 gap-1.5 p-1 bg-slate-950/90 border border-slate-800 rounded-2xl mb-2.5">
+          <button type="button" onclick="selectQuickDate(0)" id="btnToday" class="py-2 text-xs font-bold rounded-xl transition text-center">Today</button>
+          <button type="button" onclick="selectQuickDate(1)" id="btnTomorrow" class="py-2 text-xs font-bold rounded-xl transition text-center">Tomorrow</button>
+          <button type="button" onclick="selectQuickDate(2)" id="btnDayAfter" class="py-2 text-xs font-bold rounded-xl transition text-center">Day After</button>
+        </div>
+        <div class="relative cursor-pointer" onclick="openDatePicker()">
+          <input type="date" id="dateInput" onchange="onDateChange()" onclick="this.showPicker && this.showPicker()" onkeydown="return false" class="w-full bg-slate-950/90 border border-slate-800 rounded-2xl pl-10 pr-4 py-3 text-xs text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/50 transition font-medium cursor-pointer select-none" />
+          <span class="absolute left-3.5 top-3 text-slate-500 text-sm pointer-events-none">📅</span>
+        </div>
+      </div>
+
+      <!-- Preferred Time Slots -->
+      <div>
+        <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Select Preferred Time</label>
+        <div class="grid grid-cols-4 gap-2" id="timeGrid">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+
+      <!-- Customer Contact Details -->
+      <div class="space-y-3.5 pt-2 border-t border-slate-800/80">
+        <div>
+          <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">Your Full Name *</label>
+          <div class="relative">
+            <input type="text" id="nameInput" placeholder="e.g. Himanshu Kushwaha" required class="w-full bg-slate-950/90 border border-slate-800 rounded-xl pl-10 pr-4 py-3 text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/50 transition font-medium" />
+            <span class="absolute left-3.5 top-3 text-slate-500 text-sm">👤</span>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">WhatsApp Phone Number *</label>
+          <div class="relative">
+            <input type="tel" id="phoneInput" placeholder="e.g. 9670393289" required class="w-full bg-slate-950/90 border border-slate-800 rounded-xl pl-10 pr-4 py-3 text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/50 transition font-mono font-medium" />
+            <span class="absolute left-3.5 top-3 text-slate-500 text-sm">📱</span>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">Special Requests (Optional)</label>
+          <div class="relative">
+            <input type="text" id="noteInput" placeholder="e.g. Corner table / AC section" class="w-full bg-slate-950/90 border border-slate-800 rounded-xl pl-10 pr-4 py-3 text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/50 transition font-medium" />
+            <span class="absolute left-3.5 top-3 text-slate-500 text-sm">📝</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit CTA Button -->
+      <button type="submit" id="submitBtn" class="w-full py-4 bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 hover:from-emerald-400 hover:to-teal-400 text-white font-extrabold rounded-2xl shadow-xl shadow-emerald-950/60 transition-all transform active:scale-[0.99] flex items-center justify-center gap-2 text-sm tracking-wide">
+        <span>📅</span> Confirm Table Reservation
+      </button>
+    </form>
+  </main>
+
+  <!-- Footer -->
+  <footer class="py-4 border-t border-slate-900/80 text-center text-[11px] text-slate-500 font-medium">
+    Powered by <span class="font-bold text-slate-300">DineBoard</span> · Smart Dining Platform
+  </footer>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const slug = urlParams.get('r') || urlParams.get('slug') || 'restro';
+    let selectedGuests = 2;
+    let selectedTime = '19:30';
+
+    // Dates Init
+    const now = new Date();
+    const todayStr = now.toISOString().split('T')[0];
+    document.getElementById('dateInput').value = todayStr;
+    document.getElementById('dateInput').min = todayStr;
+
+    function selectQuickDate(offsetDays) {
+      const d = new Date();
+      d.setDate(d.getDate() + offsetDays);
+      const dateStr = d.toISOString().split('T')[0];
+      document.getElementById('dateInput').value = dateStr;
+      updateQuickDateStyles();
+      renderTimes();
+    }
+
+    function updateQuickDateStyles() {
+      const val = document.getElementById('dateInput').value;
+      const today = new Date();
+      const tom = new Date(); tom.setDate(today.getDate() + 1);
+      const dayAfter = new Date(); dayAfter.setDate(today.getDate() + 2);
+
+      const activeClass = 'bg-emerald-500 text-white font-extrabold shadow-md shadow-emerald-950/60 scale-[1.02]';
+      const inactiveClass = 'text-slate-400 hover:text-slate-200 font-semibold';
+
+      document.getElementById('btnToday').className = `py-2 text-xs rounded-xl transition text-center ${val === today.toISOString().split('T')[0] ? activeClass : inactiveClass}`;
+      document.getElementById('btnTomorrow').className = `py-2 text-xs rounded-xl transition text-center ${val === tom.toISOString().split('T')[0] ? activeClass : inactiveClass}`;
+      document.getElementById('btnDayAfter').className = `py-2 text-xs rounded-xl transition text-center ${val === dayAfter.toISOString().split('T')[0] ? activeClass : inactiveClass}`;
+    }
+
+    function openDatePicker() {
+      const el = document.getElementById('dateInput');
+      if (el && el.showPicker) {
+        el.showPicker();
+      }
+    }
+
+    function adjustGuestCount(delta) {
+      let val = (parseInt(selectedGuests) || 2) + delta;
+      if (val < 1) val = 1;
+      if (val > 50) val = 50;
+      selectedGuests = val;
+      document.getElementById('guestInput').value = val;
+      document.getElementById('guestCountBadge').innerText = `${val} ${val === 1 ? 'Guest' : 'Guests'}`;
+    }
+
+    function onGuestInputChange(rawVal) {
+      let val = parseInt(rawVal);
+      if (isNaN(val) || val < 1) val = 1;
+      if (val > 50) val = 50;
+      selectedGuests = val;
+      document.getElementById('guestCountBadge').innerText = `${val} ${val === 1 ? 'Guest' : 'Guests'}`;
+    }
+
+    const slots = ['12:00', '13:00', '14:00', '18:00', '19:00', '19:30', '20:00', '20:30', '21:00', '21:30', '22:00'];
+    const timeGrid = document.getElementById('timeGrid');
+
+    function renderTimes() {
+      timeGrid.innerHTML = '';
+      const selectedDate = document.getElementById('dateInput').value;
+      const currNow = new Date();
+      const isToday = selectedDate === todayStr;
+      const currentMins = currNow.getHours() * 60 + currNow.getMinutes();
+
+      let firstValidSlot = null;
+
+      slots.forEach(slot => {
+        const [h, m] = slot.split(':').map(Number);
+        const slotMins = h * 60 + m;
+        const isPast = isToday && slotMins <= currentMins + 15;
+
+        const hour = h;
+        const ampm = hour >= 12 ? 'PM' : 'AM';
+        const displayH = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour;
+        const label = `${displayH}:${slot.split(':')[1]} ${ampm}`;
+
+        const btn = document.createElement('button');
+        btn.type = 'button';
+
+        if (isPast) {
+          btn.disabled = true;
+          btn.className = 'py-2.5 text-xs font-medium rounded-xl border transition text-center bg-slate-950/40 text-slate-600 border-slate-900/60 cursor-not-allowed line-through opacity-50';
+          btn.innerText = label;
+        } else {
+          if (!firstValidSlot) firstValidSlot = slot;
+          if (slot === selectedTime) {
+            btn.className = 'py-2.5 text-xs font-bold rounded-xl border transition text-center bg-emerald-500 text-white border-emerald-400 shadow-md shadow-emerald-950/50 scale-[1.02]';
+          } else {
+            btn.className = 'py-2.5 text-xs font-medium rounded-xl border transition text-center bg-slate-950 text-slate-300 border-slate-800 hover:border-slate-700';
+          }
+          btn.innerText = label;
+          btn.onclick = () => {
+            selectedTime = slot;
+            renderTimes();
+          };
+        }
+        timeGrid.appendChild(btn);
+      });
+
+      // Auto fallback if selected slot was in past
+      if (isToday && firstValidSlot && (parseInt(selectedTime.split(':')[0]) * 60 + parseInt(selectedTime.split(':')[1]) <= currentMins + 15)) {
+        selectedTime = firstValidSlot;
+        renderTimes();
+      } else if (isToday && !firstValidSlot) {
+        selectQuickDate(1);
+      }
+    }
+
+    function onDateChange() {
+      updateQuickDateStyles();
+      renderTimes();
+    }
+
+    updateQuickDateStyles();
+    renderTimes();
+
+    async function submitForm(e) {
+      e.preventDefault();
+      const name = document.getElementById('nameInput').value.trim();
+      const phone = document.getElementById('phoneInput').value.trim();
+      const date = document.getElementById('dateInput').value;
+      const note = document.getElementById('noteInput').value.trim();
+      const errDiv = document.getElementById('errorAlert');
+
+      errDiv.classList.add('hidden');
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<span class="animate-spin text-lg">⏳</span> Checking Table Availability...`;
+
+      const payload = JSON.stringify({
+        date,
+        time: selectedTime,
+        guests: selectedGuests,
+        customerName: name,
+        customerPhone: phone,
+        note,
+        source: 'web_form'
+      });
+
+      const endpoints = [
+        `/api/bookings/confirm?slug=${slug}`,
+        `http://localhost:4000/api/bookings/confirm?slug=${slug}`,
+        `http://localhost:5000/api/bookings/confirm?slug=${slug}`
+      ];
+
+      let data = null;
+
+      for (const endpoint of endpoints) {
+        try {
+          const res = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: payload
+          });
+          const resJson = await res.json().catch(() => null);
+          if (resJson) {
+            data = resJson;
+            break;
+          }
+        } catch (err) {}
+      }
+
+      if (data && data.success && data.data?.booking) {
+        const b = data.data.booking;
+        document.getElementById('resCode').innerText = b.bookingCode;
+        document.getElementById('resDateTime').innerText = `${date} at ${b.bookingTime}`;
+        document.getElementById('resGuests').innerText = `${b.guests} Guests`;
+        document.getElementById('resName').innerText = name;
+        document.getElementById('bookingForm').classList.add('hidden');
+        document.getElementById('successCard').classList.remove('hidden');
+      } else if (data && (data.message || data.data?.message)) {
+        document.getElementById('errorMsg').innerText = data.data?.message || data.message;
+        errDiv.classList.remove('hidden');
+      } else {
+        document.getElementById('errorMsg').innerText = 'Unable to connect to server. Please try again.';
+        errDiv.classList.remove('hidden');
+      }
+
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = `<span>📅</span> Confirm Table Reservation`;
+    }
+  </script>
+</body>
+</html>

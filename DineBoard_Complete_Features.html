@@ -1,0 +1,2023 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DineBoard - Complete Product Features</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* HEADER */
+        header {
+            background: white;
+            border-radius: 15px;
+            padding: 50px 30px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        header h1 {
+            color: #667eea;
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        header .tagline {
+            color: #764ba2;
+            font-size: 1.3em;
+            font-style: italic;
+            margin-bottom: 20px;
+        }
+
+        header p {
+            color: #666;
+            font-size: 1.1em;
+            line-height: 1.8;
+        }
+
+        /* NAVIGATION */
+        nav {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 40px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+            overflow-x: auto;
+        }
+
+        nav .nav-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        nav button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        nav button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        nav button.active {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        /* SECTIONS */
+        .section {
+            display: none;
+            animation: slideIn 0.5s ease;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section h2 {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            color: #667eea;
+            font-size: 2.2em;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            border-bottom: 4px solid #667eea;
+        }
+
+        /* FEATURE CARDS */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border-left: 5px solid #667eea;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.2);
+            border-left-color: #f5576c;
+        }
+
+        .feature-card .icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+            display: inline-block;
+        }
+
+        .feature-card h3 {
+            color: #667eea;
+            font-size: 1.3em;
+            margin-bottom: 12px;
+        }
+
+        .feature-card p {
+            color: #666;
+            font-size: 0.95em;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .feature-card .benefits {
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 0.85em;
+            color: #555;
+        }
+
+        .feature-card .benefits ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .feature-card .benefits li {
+            padding: 5px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .feature-card .benefits li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        /* SUBSECTIONS */
+        .subsection {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .subsection h3 {
+            color: #667eea;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        /* COMPARISON TABLE */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #667eea;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            color: #555;
+        }
+
+        tbody tr:hover {
+            background: linear-gradient(90deg, #667eea10 0%, transparent 100%);
+        }
+
+        /* FEATURE MATRIX */
+        .matrix-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .matrix-item {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .matrix-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .matrix-item .number {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .matrix-item .label {
+            font-size: 0.9em;
+            opacity: 0.95;
+        }
+
+        /* COLUMNS */
+        .columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 20px 0;
+        }
+
+        .columns.three {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        /* HIGHLIGHT BOX */
+        .highlight {
+            background: linear-gradient(135deg, #fff5e6 0%, #ffe6f0 100%);
+            border-left: 5px solid #f5576c;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .highlight.info {
+            background: linear-gradient(135deg, #e6f7ff 0%, #e6f0ff 100%);
+            border-left-color: #667eea;
+        }
+
+        .highlight.success {
+            background: linear-gradient(135deg, #e6ffe6 0%, #e6fff0 100%);
+            border-left-color: #28a745;
+        }
+
+        .highlight h4 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        /* FEATURE LIST */
+        .feature-list {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+        }
+
+        .feature-list li {
+            padding: 12px 0;
+            padding-left: 35px;
+            position: relative;
+            color: #555;
+            border-bottom: 1px solid #eee;
+        }
+
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+
+        .feature-list li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        /* BADGE */
+        .badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+
+        .badge.new {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .badge.pro {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+
+        /* TIER BOXES */
+        .tier-boxes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .tier-box {
+            background: white;
+            border: 2px solid #667eea;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .tier-box:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.2);
+            border-color: #f5576c;
+        }
+
+        .tier-box h4 {
+            color: #667eea;
+            font-size: 1.3em;
+            margin-bottom: 15px;
+        }
+
+        .tier-box .price {
+            font-size: 2.2em;
+            color: #667eea;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .tier-box ul {
+            list-style: none;
+            text-align: left;
+        }
+
+        .tier-box li {
+            padding: 8px 0;
+            color: #666;
+            border-bottom: 1px solid #eee;
+        }
+
+        .tier-box li::before {
+            content: '✓ ';
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        /* FOOTER */
+        footer {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            color: #666;
+            margin-top: 50px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        footer p {
+            margin: 10px 0;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2em;
+            }
+
+            nav .nav-content {
+                flex-direction: column;
+            }
+
+            nav button {
+                width: 100%;
+            }
+
+            .columns {
+                grid-template-columns: 1fr;
+            }
+
+            .columns.three {
+                grid-template-columns: 1fr;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* SECTION INTRO */
+        .section-intro {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .section-intro h3 {
+            font-size: 1.5em;
+            margin-bottom: 12px;
+        }
+
+        .section-intro p {
+            font-size: 1.05em;
+            line-height: 1.8;
+            opacity: 0.95;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- HEADER -->
+        <header>
+            <h1>🍽️ DineBoard</h1>
+            <p class="tagline">Complete Product Features & Capabilities</p>
+            <p>The all-in-one AI-powered restaurant management platform designed for modern Indian restaurants</p>
+        </header>
+
+        <!-- NAVIGATION -->
+        <nav>
+            <div class="nav-content">
+                <button class="nav-btn active" data-section="overview">Overview</button>
+                <button class="nav-btn" data-section="customer">Customer Features</button>
+                <button class="nav-btn" data-section="restaurant">Restaurant Admin</button>
+                <button class="nav-btn" data-section="whatsapp">WhatsApp AI</button>
+                <button class="nav-btn" data-section="bookings">Table Booking</button>
+                <button class="nav-btn" data-section="orders">Orders & Payments</button>
+                <button class="nav-btn" data-section="management">Management</button>
+                <button class="nav-btn" data-section="reports">Reports & Analytics</button>
+                <button class="nav-btn" data-section="integrations">Integrations</button>
+                <button class="nav-btn" data-section="pricing">Pricing Tiers</button>
+            </div>
+        </nav>
+
+        <!-- OVERVIEW SECTION -->
+        <section id="overview" class="section active">
+            <h2>🎯 Product Overview</h2>
+
+            <div class="section-intro">
+                <h3>Welcome to DineBoard</h3>
+                <p>DineBoard is a revolutionary multi-tenant SaaS platform that transforms how restaurants operate. With AI-powered WhatsApp ordering, intelligent table management, and comprehensive analytics, DineBoard is built specifically for Indian restaurants seeking to go digital.</p>
+            </div>
+
+            <div class="subsection">
+                <h3>Key Statistics</h3>
+                <div class="matrix-grid">
+                    <div class="matrix-item">
+                        <div class="number">∞</div>
+                        <div class="label">Restaurants Supported</div>
+                    </div>
+                    <div class="matrix-item">
+                        <div class="number">77+</div>
+                        <div class="label">Default Menu Items</div>
+                    </div>
+                    <div class="matrix-item">
+                        <div class="number">Zero</div>
+                        <div class="label">Registration Required</div>
+                    </div>
+                    <div class="matrix-item">
+                        <div class="number">60 sec</div>
+                        <div class="label">Booking Time</div>
+                    </div>
+                    <div class="matrix-item">
+                        <div class="number">24/7</div>
+                        <div class="label">Automated AI Support</div>
+                    </div>
+                    <div class="matrix-item">
+                        <div class="number">99.9%</div>
+                        <div class="label">Platform Uptime</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3>What Makes DineBoard Different</h3>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="icon">🇮🇳</div>
+                        <h3>India-First</h3>
+                        <p>Built for Indian restaurants with GST compliance, Hindi/Hinglish support, and Razorpay integration</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">💬</div>
+                        <h3>WhatsApp Native</h3>
+                        <p>Customers order and book via WhatsApp - no app download needed, zero friction</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">🤖</div>
+                        <h3>AI Powered</h3>
+                        <p>Natural language understanding with Google Gemini AI for intelligent conversations</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">💰</div>
+                        <h3>Flexible Pricing</h3>
+                        <p>Subscription + Commission model ensures we grow when you grow</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">☁️</div>
+                        <h3>Cloud-Native</h3>
+                        <p>No hardware needed - complete cloud solution with automatic scaling</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">📊</div>
+                        <h3>Real-Time Analytics</h3>
+                        <p>Live dashboards showing orders, revenue, bookings, and customer insights</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CUSTOMER FEATURES -->
+        <section id="customer" class="section">
+            <h2>👥 Customer Features</h2>
+
+            <div class="section-intro">
+                <h3>Zero-Friction Customer Experience</h3>
+                <p>Customers can discover restaurants, make reservations, and order food entirely through WhatsApp - without any registration or app downloads required.</p>
+            </div>
+
+            <div class="subsection">
+                <h3>Web-Based Customer Portal</h3>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="icon">🌐</div>
+                        <h3>Restaurant Discovery</h3>
+                        <p>Browse restaurant menu with beautiful visuals, ratings, and timing information</p>
+                        <div class="benefits">
+                            <ul>
+                                <li>Search by cuisine type</li>
+                                <li>Filter by location/rating</li>
+                                <li>View operating hours</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">🛒</div>
+                        <h3>Menu Browsing</h3>
+                        <p>Explore complete menu organized by categories with prices and images</p>
+                        <div class="benefits">
+                            <ul>
+                                <li>Veg/Non-veg filters</li>
+                                <li>High-res food photos</li>
+                                <li>Detailed descriptions</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">📅</div>
+                        <h3>Table Booking</h3>
+                        <p>Reserve tables instantly with real-time availability</p>
+                        <div class="benefits">
+                            <ul>
+                                <li>Date & time selection</li>
+                                <li>Group size options</li>
+                                <li>Special requests notes</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">💳</div>
+                        <h3>Multiple Payment Options</h3>
+                        <p>Pay via UPI, cards, netbanking, or cash at restaurant</p>
+                        <div class="benefits">
+                            <ul>
+                                <li>Secure payment gateway</li>
+                                <li>Payment link via WhatsApp</li>
+                                <li>Invoice generation</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">⭐</div>
+                        <h3>Reviews & Ratings</h3>
+                        <p>Read customer reviews and rate your dining experience</p>
+                        <div class="benefits">
+                            <ul>
+                                <li>5-star rating system</li>
+                                <li>Photo upload support</li>
+                                <li>Detailed feedback</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">📱</div>
+                        <h3>Order Tracking</h3>
+                        <p>Track order status in real-time from kitchen to delivery</p>
+                        <div class="benefits">
+                            <ul>
+                                <li>Live status updates</li>
+                                <li>Estimated delivery time</li>
+                                <li>WhatsApp notifications</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3>WhatsApp Customer Portal</h3>
+                <p>Customers can interact entirely through WhatsApp without visiting the web portal</p>
+                <ul class="feature-list">
+                    <li><strong>Menu Sharing:</strong> Restaurant sends catalog via WhatsApp with items and prices</li>
+                    <li><strong>Order Placement:</strong> Customer sends food selections via chat</li>
+                    <li><strong>Table Booking:</strong> Check availability and book tables through conversation</li>
+                    <li><strong>Bill Requests:</strong> Request invoice/bill directly via WhatsApp</li>
+                    <li><strong>Payment Links:</strong> Receive payment link via WhatsApp for easy checkout</li>
+                    <li><strong>Order Status:</strong> Get real-time order updates via WhatsApp</li>
+                </ul>
+            </div>
+
+            <div class="subsection">
+                <h3>Customer Communication</h3>
+                <div class="columns">
+                    <div>
+                        <h4>Notifications Sent To Customer</h4>
+                        <ul class="feature-list">
+                            <li>Booking confirmation</li>
+                            <li>Booking reminder (1 hour before)</li>
+                            <li>Order received confirmation</li>
+                            <li>Order status updates</li>
+                            <li>Payment reminders</li>
+                            <li>Invoice/receipt delivery</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>Communication Channels</h4>
+                        <ul class="feature-list">
+                            <li>WhatsApp messages</li>
+                            <li>Email notifications</li>
+                            <li>SMS alerts (optional)</li>
+                            <li>Push notifications (web)</li>
+                            <li>In-app notifications</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- RESTAURANT ADMIN -->
+        <section id="restaurant" class="section">
+            <h2>🏪 Restaurant Admin Dashboard</h2>
+
+            <div class="section-intro">
+                <h3>Complete Restaurant Management</h3>
+                <p>Powerful admin panel to manage every aspect of your restaurant operations - from menu management to real-time order tracking and comprehensive analytics.</p>
+            </div>
+
+            <div class="subsection">
+                <h3>Dashboard & Overview</h3>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="icon">📊</div>
+                        <h3>Live Dashboard</h3>
+                        <p>Real-time overview of business metrics at a glance</p>
+                        <div class="benefits">
+                            <ul>
+                                <li>Today's revenue (₹)</li>
+                                <li>Orders completed</li>
+                                <li>Bookings confirmed</li>
+                                <li>Live order feed</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">🔔</div>
+                        <h3>Real-Time Notifications</h3>
+                        <p>Instant alerts for new orders and bookings</p>
+                        <div class="benefits">
+                            <ul>
+                                <li>Sound notifications</li>
+                                <li>Browser alerts</li>
+                                <li>WhatsApp notifications</li>
+                                <li>Customizable alerts</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">📈</div>
+                        <h3>Business Metrics</h3>
+                        <p>Track key performance indicators in real-time</p>
+                        <div class="benefits">
+                            <ul>
+                                <li>Revenue tracking</li>
+                                <li>Order analytics</li>
+                                <li>Booking statistics</li>
+                                <li>Performance trends</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3>Restaurant Setup & Configuration</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Setting</th>
+                            <th>Configuration Options</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Basic Info</strong></td>
+                            <td>Restaurant name, tagline, description, phone, address, GST number</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Branding</strong></td>
+                            <td>Logo upload, primary color theme, custom domain support</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Operating Hours</strong></td>
+                            <td>Opening/closing times, lunch/dinner hours, holiday schedule</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Table Configuration</strong></td>
+                            <td>Slot duration (default 60 min), dining time (45 min), cleaning time (15 min)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Payment Settings</strong></td>
+                            <td>Use platform Razorpay or connect own Razorpay account</td>
+                        </tr>
+                        <tr>
+                            <td><strong>WhatsApp Setup</strong></td>
+                            <td>Restaurant's own WhatsApp number for customer interactions</td>
+                        </tr>
+                        <tr>
+                            <td><strong>GST Configuration</strong></td>
+                            <td>GSTIN, CGST/SGST rates for invoice generation</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="subsection">
+                <h3>Core Management Modules</h3>
+                <div class="columns three">
+                    <div>
+                        <h4>📋 Menu Management</h4>
+                        <ul class="feature-list">
+                            <li>Add/edit menu items</li>
+                            <li>Organize by categories</li>
+                            <li>Veg/Non-veg tagging</li>
+                            <li>Dynamic pricing</li>
+                            <li>Photo uploads</li>
+                            <li>Availability toggle</li>
+                            <li>Bulk import/export</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>🪑 Table Management</h4>
+                        <ul class="feature-list">
+                            <li>Add/edit tables</li>
+                            <li>Set table capacity</li>
+                            <li>Group into sections</li>
+                            <li>Combine seating</li>
+                            <li>Status tracking</li>
+                            <li>Manual overrides</li>
+                            <li>Table maps</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>👥 Staff Management</h4>
+                        <ul class="feature-list">
+                            <li>Add staff members</li>
+                            <li>Role assignment (owner/manager/waiter/chef/cashier)</li>
+                            <li>Permission control</li>
+                            <li>Access levels</li>
+                            <li>Login credentials</li>
+                            <li>Activity logs</li>
+                            <li>Performance tracking</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- WHATSAPP AI -->
+        <section id="whatsapp" class="section">
+            <h2>🤖 AI-Powered WhatsApp Chatbot</h2>
+
+            <div class="section-intro">
+                <h3>Natural Language AI Conversations</h3>
+                <p>Powered by Google Gemini AI, DineBoard's WhatsApp chatbot understands natural language in Hindi, English, and Hinglish, making restaurant interactions feel human and natural.</p>
+            </div>
+
+            <div class="subsection">
+                <h3>AI Chatbot Capabilities</h3>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="icon">💬</div>
+                        <h3>Natural Language Understanding</h3>
+                        <p>Understands customer intent from casual conversation</p>
+                        <div class="benefits">
+                            <ul>
+                                <li>Hindi language support</li>
+                                <li>English support</li>
+                                <li>Hinglish (mix) support</li>
+                                <li>Typo tolerance</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">🍽️</div>
+                        <h3>Order Intent Detection</h3>
+                        <p>Recognizes when customer wants to order food</p>
+                        <div class="benefits">
+                            <ul>
+                                <li>"Mujhe butter chicken chahiye"</li>
+                                <li>"2x biryani and 1x naan"</li>
+                                <li>"Do mujhe kya special hai?"</li>
+                                <li>Auto-complete items</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">📅</div>
+                        <h3>Booking Intent Detection</h3>
+                        <p>Recognizes table booking requests</p>
+                        <div class="benefits">
+                            <ul>
+                                <li>"Booking chahiye kal 7pm"</li>
+                                <li>"5 log ke liye table"</li>
+                                <li>Date/time extraction</li>
+                                <li>Party size detection</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">💳</div>
+                        <h3>Bill/Payment Requests</h3>
+                        <p>Handles bill requests and payment processing</p>
+                        <div class="benefits">
+                            <ul>
+                                <li>"Bill bhej do"</li>
+                                <li>Invoice generation</li>
+                                <li>Payment link creation</li>
+                                <li>GST calculation</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">⭐</div>
+                        <h3>Food Recommendations</h3>
+                        <p>AI suggests dishes based on preferences</p>
+                        <div class="benefits">
+                            <ul>
+                                <li>Smart suggestions</li>
+                                <li>Dietary preferences</li>
+                                <li>Budget constraints</li>
+                                <li>Popular dishes</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">❓</div>
+                        <h3>General Inquiries</h3>
+                        <p>Answers restaurant information queries</p>
+                        <div class="benefits">
+                            <ul>
+                                <li>Operating hours</li>
+                                <li>Address/location</li>
+                                <li>Delivery info</li>
+                                <li>Special offers</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3>Conversation Management</h3>
+                <div class="highlight info">
+                    <h4>Context & Memory</h4>
+                    <p>AI maintains conversation context across multiple messages, remembering customer preferences, order history, and special requests within a session using Redis-based context management.</p>
+                </div>
+
+                <div class="columns">
+                    <div>
+                        <h4>Admin Features</h4>
+                        <ul class="feature-list">
+                            <li>View all conversations</li>
+                            <li>Monitor AI accuracy</li>
+                            <li>Override AI responses</li>
+                            <li>Train with feedback</li>
+                            <li>Analytics on conversations</li>
+                            <li>Export chat history</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>AI Conversation Flow</h4>
+                        <ul class="feature-list">
+                            <li>Greeting & intro</li>
+                            <li>Intent detection</li>
+                            <li>Gather information</li>
+                            <li>Confirm order/booking</li>
+                            <li>Process transaction</li>
+                            <li>Send confirmation</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3>WhatsApp Integration Details</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Feature</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Multi-Number Support</strong></td>
+                            <td>Each restaurant gets their own WhatsApp number for customer interactions</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Message Types</strong></td>
+                            <td>Text, images, media, quick replies, interactive buttons</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Templates</strong></td>
+                            <td>Pre-built templates for confirmations, reminders, bills, offers</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Media Support</strong></td>
+                            <td>Menu images, invoice PDFs, product photos via WhatsApp</td>
+                        </tr>
+                        <tr>
+                            <td><strong>24/7 Availability</strong></td>
+                            <td>AI chatbot available round-the-clock for customer interactions</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Handoff to Human</strong></td>
+                            <td>Complex queries automatically escalated to staff</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- TABLE BOOKING -->
+        <section id="bookings" class="section">
+            <h2>📅 Intelligent Table Booking System</h2>
+
+            <div class="section-intro">
+                <h3>Smart Slot Management</h3>
+                <p>Advanced table booking with configurable dining slots, automatic table status updates, and prevention of double-booking through sophisticated availability logic.</p>
+            </div>
+
+            <div class="subsection">
+                <h3>Booking Features</h3>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="icon">⏰</div>
+                        <h3>60-Minute Slot System</h3>
+                        <p>Each table reserved for 60-minute window (45 dining + 15 cleaning)</p>
+                        <div class="benefits">
+                            <ul>
+                                <li>Configurable slot times</li>
+                                <li>Adjust dining duration</li>
+                                <li>Adjust cleaning time</li>
+                                <li>Seasonal adjustments</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">✅</div>
+                        <h3>Real-Time Availability</h3>
+                        <p>Check available tables instantly for any date/time</p>
+                        <div class="benefits">
+                            <ul>
+                                <li>Live availability check</li>
+                                <li>Instant confirmation</li>
+                                <li>Suggestions for alternatives</li>
+                                <li>No double-booking</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">👥</div>
+                        <h3>Smart Table Assignment</h3>
+                        <p>Optimal table selection based on party size</p>
+                        <div class="benefits">
+                            <ul>
+                                <li>Right-size tables</li>
+                                <li>Combine seating areas</li>
+                                <li>Minimize waste</li>
+                                <li>Customer preferences</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">📍</div>
+                        <h3>Section Preferences</h3>
+                        <p>Choose preferred seating location</p>
+                        <div class="benefits">
+                            <ul>
+                                <li>Window seating</li>
+                                <li>Corner tables</li>
+                                <li>Private areas</li>
+                                <li>VIP sections</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">🔄</div>
+                        <h3>Auto Table Status</h3>
+                        <p>Automatic status updates throughout dining</p>
+                        <div class="benefits">
+                            <ul>
+                                <li>Dining → Cleaning</li>
+                                <li>Cleaning → Available</li>
+                                <li>Scheduled transitions</li>
+                                <li>Manual overrides</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">🔔</div>
+                        <h3>Smart Reminders</h3>
+                        <p>Automated customer reminders</p>
+                        <div class="benefits">
+                            <ul>
+                                <li>1-hour before reminder</li>
+                                <li>30-min before reminder</li>
+                                <li>Via WhatsApp</li>
+                                <li>Via Email & SMS</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3>Booking Calendar & Views</h3>
+                <div class="columns">
+                    <div>
+                        <h4>Admin Views</h4>
+                        <ul class="feature-list">
+                            <li>Calendar view of all bookings</li>
+                            <li>Table grid view (map-based)</li>
+                            <li>List view with filters</li>
+                            <li>Timeline view by time slot</li>
+                            <li>Search and filter bookings</li>
+                            <li>Export booking list</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>Booking Management</h4>
+                        <ul class="feature-list">
+                            <li>Confirm bookings</li>
+                            <li>Modify bookings</li>
+                            <li>Cancel with refund</li>
+                            <li>Add special notes</li>
+                            <li>Mark as checked-in</li>
+                            <li>No-show tracking</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3>Booking Information Capture</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Information Type</th>
+                            <th>Purpose</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Customer Details</strong></td>
+                            <td>Name, phone, email for confirmation and reminders</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Booking Date & Time</strong></td>
+                            <td>Schedule reservation and send reminders</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Party Size</strong></td>
+                            <td>Determine tables needed for optimal seating</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Table Preference</strong></td>
+                            <td>Window, corner, private area - customer choice</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Special Requests</strong></td>
+                            <td>Dietary restrictions, allergies, celebrations</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Occasion Type</strong></td>
+                            <td>Birthday, anniversary, business - for personalization</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ORDERS & PAYMENTS -->
+        <section id="orders" class="section">
+            <h2>🛒 Orders & Payment Processing</h2>
+
+            <div class="section-intro">
+                <h3>Complete Order Lifecycle Management</h3>
+                <p>From order placement to payment collection, DineBoard handles the entire order flow with real-time tracking, multiple payment options, and seamless customer communication.</p>
+            </div>
+
+            <div class="subsection">
+                <h3>Order Management Features</h3>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="icon">📝</div>
+                        <h3>Order Creation</h3>
+                        <p>Multiple ways to place orders</p>
+                        <div class="benefits">
+                            <ul>
+                                <li>Web portal ordering</li>
+                                <li>WhatsApp chatbot</li>
+                                <li>Admin manual entry</li>
+                                <li>Bulk order import</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">🔄</div>
+                        <h3>Order Status Tracking</h3>
+                        <p>Real-time status updates through order lifecycle</p>
+                        <div class="benefits">
+                            <ul>
+                                <li>Received status</li>
+                                <li>Confirmed status</li>
+                                <li>Preparing status</li>
+                                <li>Ready/Delivery status</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">✏️</div>
+                        <h3>Order Modification</h3>
+                        <p>Modify orders before preparation starts</p>
+                        <div class="benefits">
+                            <ul>
+                                <li>Add items</li>
+                                <li>Remove items</li>
+                                <li>Change quantities</li>
+                                <li>Special instructions</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">🎟️</div>
+                        <h3>Promo & Discounts</h3>
+                        <p>Create and manage promotional offers</p>
+                        <div class="benefits">
+                            <ul>
+                                <li>Percentage discounts</li>
+                                <li>Flat amount discounts</li>
+                                <li>Code-based promos</li>
+                                <li>Auto-apply offers</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">🛍️</div>
+                        <h3>Cart Management</h3>
+                        <p>Intelligent shopping cart features</p>
+                        <div class="benefits">
+                            <ul>
+                                <li>Save for later</li>
+                                <li>Quantity adjustment</li>
+                                <li>Item recommendations</li>
+                                <li>Auto-calculate totals</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">📦</div>
+                        <h3>Order Bundling</h3>
+                        <p>Create combo meals and bundles</p>
+                        <div class="benefits">
+                            <ul>
+                                <li>Combo creation</li>
+                                <li>Bundle pricing</li>
+                                <li>Discount optimization</li>
+                                <li>Popular combos</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3>Payment Processing</h3>
+                <div class="highlight success">
+                    <h4>Dual Payment Model</h4>
+                    <p>Restaurants can choose to use DineBoard's platform Razorpay OR connect their own Razorpay account. Commission is charged in both cases, ensuring platform sustainability.</p>
+                </div>
+
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="icon">💰</div>
+                        <h3>Multiple Payment Options</h3>
+                        <p>Accept all payment methods customers prefer</p>
+                        <div class="benefits">
+                            <ul>
+                                <li>Credit/Debit cards</li>
+                                <li>UPI payments</li>
+                                <li>Net Banking</li>
+                                <li>Wallets</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">🔗</div>
+                        <h3>Payment Links</h3>
+                        <p>Send payment links via WhatsApp/Email</p>
+                        <div class="benefits">
+                            <ul>
+                                <li>Auto-generated links</li>
+                                <li>WhatsApp integration</li>
+                                <li>Email delivery</li>
+                                <li>Clickable invoices</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">🔐</div>
+                        <h3>Secure Transactions</h3>
+                        <p>Industry-standard security for all payments</p>
+                        <div class="benefits">
+                            <ul>
+                                <li>PCI DSS compliant</li>
+                                <li>SSL encryption</li>
+                                <li>Fraud detection</li>
+                                <li>Secure checkout</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">📄</div>
+                        <h3>Invoice Generation</h3>
+                        <p>Automatic invoice creation with GST</p>
+                        <div class="benefits">
+                            <ul>
+                                <li>Auto GST calculation</li>
+                                <li>PDF generation</li>
+                                <li>Email delivery</li>
+                                <li>Download/Print</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">💳</div>
+                        <h3>Razorpay Route</h3>
+                        <p>Automatic commission splits via Razorpay Route</p>
+                        <div class="benefits">
+                            <ul>
+                                <li>Auto fund split</li>
+                                <li>Real-time settlement</li>
+                                <li>Commission deduction</li>
+                                <li>Settlement reports</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">📊</div>
+                        <h3>Payment Analytics</h3>
+                        <p>Track payment transactions and status</p>
+                        <div class="benefits">
+                            <ul>
+                                <li>Transaction history</li>
+                                <li>Failed payment tracking</li>
+                                <li>Revenue reports</li>
+                                <li>Settlement summary</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3>Commission Management</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Commission Type</th>
+                            <th>Calculation</th>
+                            <th>Payment Method</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Order Commission</strong></td>
+                            <td>Percentage of order value (varies by plan)</td>
+                            <td>Auto-deducted via Razorpay Route OR monthly invoice</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Booking Commission</strong></td>
+                            <td>Flat amount per booking (varies by plan)</td>
+                            <td>Monthly invoice aggregation</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Own Razorpay</strong></td>
+                            <td>Commission always applies, even with own account</td>
+                            <td>Monthly invoice (not auto-deducted from payments)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- MANAGEMENT -->
+        <section id="management" class="section">
+            <h2>⚙️ Restaurant Management</h2>
+
+            <div class="section-intro">
+                <h3>Complete Business Management Tools</h3>
+                <p>Manage every aspect of your restaurant operations with comprehensive tools for menu, staff, inventory, and special promotions.</p>
+            </div>
+
+            <div class="subsection">
+                <h3>Management Modules</h3>
+                <div class="columns three">
+                    <div>
+                        <h4>🍽️ Menu Management</h4>
+                        <ul class="feature-list">
+                            <li>Add/edit/delete items</li>
+                            <li>Organize categories</li>
+                            <li>Veg/Non-veg tags</li>
+                            <li>Price management</li>
+                            <li>Image uploads</li>
+                            <li>Availability control</li>
+                            <li>Bulk operations</li>
+                            <li>Item analytics</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>🪑 Table Management</h4>
+                        <ul class="feature-list">
+                            <li>Add/edit/delete tables</li>
+                            <li>Set capacity</li>
+                            <li>Section grouping</li>
+                            <li>Combine tables</li>
+                            <li>Status monitoring</li>
+                            <li>Table maps</li>
+                            <li>Location tagging</li>
+                            <li>Availability control</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>👥 Staff Management</h4>
+                        <ul class="feature-list">
+                            <li>Add/edit/delete staff</li>
+                            <li>Role assignment</li>
+                            <li>Permission levels</li>
+                            <li>Access control</li>
+                            <li>Login tracking</li>
+                            <li>Activity logs</li>
+                            <li>Performance metrics</li>
+                            <li>Shift management</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3>Inventory & Promo Management</h3>
+                <div class="columns">
+                    <div>
+                        <h4>🎟️ Promotional Codes</h4>
+                        <ul class="feature-list">
+                            <li>Create promo codes</li>
+                            <li>Percentage discounts</li>
+                            <li>Flat amount discounts</li>
+                            <li>Validity date range</li>
+                            <li>Max usage limits</li>
+                            <li>Min order requirement</li>
+                            <li>Category-specific</li>
+                            <li>Analytics per code</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>📦 Inventory (Optional)</h4>
+                        <ul class="feature-list">
+                            <li>Stock tracking</li>
+                            <li>Low stock alerts</li>
+                            <li>Reorder points</li>
+                            <li>Supplier management</li>
+                            <li>Purchase orders</li>
+                            <li>Stock adjustments</li>
+                            <li>Waste tracking</li>
+                            <li>Cost analysis</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3>GST & Invoice Management</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Feature</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>GST Configuration</strong></td>
+                            <td>Store GSTIN, set CGST/SGST rates, apply on items/categories</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Invoice Generation</strong></td>
+                            <td>Auto-generate invoices with GST calculation</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Invoice Customization</strong></td>
+                            <td>Add restaurant details, itemization, tax breakdown, footer notes</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Invoice Distribution</strong></td>
+                            <td>Email, WhatsApp, or print - customer choice</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Invoice History</strong></td>
+                            <td>Archive all invoices for compliance and record-keeping</td>
+                        </tr>
+                        <tr>
+                            <td><strong>GST Reports</strong></td>
+                            <td>Generate GST reports for tax filing purposes</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- REPORTS & ANALYTICS -->
+        <section id="reports" class="section">
+            <h2>📊 Reports & Analytics</h2>
+
+            <div class="section-intro">
+                <h3>Data-Driven Insights</h3>
+                <p>Comprehensive analytics and reporting tools to understand your restaurant's performance, identify trends, and make data-driven business decisions.</p>
+            </div>
+
+            <div class="subsection">
+                <h3>Analytics & Reports Available</h3>
+                <div class="columns three">
+                    <div>
+                        <h4>💰 Revenue Reports</h4>
+                        <ul class="feature-list">
+                            <li>Daily revenue</li>
+                            <li>Weekly revenue</li>
+                            <li>Monthly revenue</li>
+                            <li>Year-to-date</li>
+                            <li>Revenue trends</li>
+                            <li>Growth comparison</li>
+                            <li>Payment method breakdown</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>📦 Order Analytics</h4>
+                        <ul class="feature-list">
+                            <li>Total orders</li>
+                            <li>Order by time</li>
+                            <li>Popular items</li>
+                            <li>Item combinations</li>
+                            <li>Average order value</li>
+                            <li>Order trends</li>
+                            <li>Cancellation rate</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>📅 Booking Analytics</h4>
+                        <ul class="feature-list">
+                            <li>Total bookings</li>
+                            <li>Booking by time</li>
+                            <li>Party size distribution</li>
+                            <li>Booking trends</li>
+                            <li>No-show rate</li>
+                            <li>Cancellation rate</li>
+                            <li>Peak hours</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3>Advanced Analytics</h3>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="icon">📈</div>
+                        <h3>Performance Trends</h3>
+                        <p>Visual trend analysis with charts and graphs</p>
+                        <div class="benefits">
+                            <ul>
+                                <li>Line charts</li>
+                                <li>Bar graphs</li>
+                                <li>Pie charts</li>
+                                <li>Heatmaps</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">🪑</div>
+                        <h3>Table Utilization</h3>
+                        <p>Track table occupancy and efficiency</p>
+                        <div class="benefits">
+                            <ul>
+                                <li>Occupancy rate</li>
+                                <li>Peak hours</li>
+                                <li>Table efficiency</li>
+                                <li>Suggestions</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">👥</div>
+                        <h3>Customer Insights</h3>
+                        <p>Understand customer behavior patterns</p>
+                        <div class="benefits">
+                            <ul>
+                                <li>Repeat customers</li>
+                                <li>Customer lifetime value</li>
+                                <li>Preferences</li>
+                                <li>Feedback ratings</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">🍽️</div>
+                        <h3>Menu Performance</h3>
+                        <p>Analyze which items sell best</p>
+                        <div class="benefits">
+                            <ul>
+                                <li>Top sellers</li>
+                                <li>Worst performers</li>
+                                <li>Profitability</li>
+                                <li>Recommendations</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">📊</div>
+                        <h3>Custom Reports</h3>
+                        <p>Create custom reports with your metrics</p>
+                        <div class="benefits">
+                            <ul>
+                                <li>Flexible filters</li>
+                                <li>Date ranges</li>
+                                <li>Multi-select</li>
+                                <li>Export options</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">📧</div>
+                        <h3>WhatsApp Reports</h3>
+                        <p>Receive reports via WhatsApp</p>
+                        <div class="benefits">
+                            <ul>
+                                <li>Daily summary</li>
+                                <li>Weekly report</li>
+                                <li>Monthly digest</li>
+                                <li>On-demand</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3>Report Export Options</h3>
+                <div class="columns">
+                    <div>
+                        <h4>Formats Available</h4>
+                        <ul class="feature-list">
+                            <li>PDF download</li>
+                            <li>Excel/CSV export</li>
+                            <li>Google Sheets link</li>
+                            <li>Email delivery</li>
+                            <li>WhatsApp share</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>Scheduled Reports</h4>
+                        <ul class="feature-list">
+                            <li>Daily reports</li>
+                            <li>Weekly digest</li>
+                            <li>Monthly summary</li>
+                            <li>Auto-email</li>
+                            <li>Auto-WhatsApp</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- INTEGRATIONS -->
+        <section id="integrations" class="section">
+            <h2>🔗 Integrations & Ecosystem</h2>
+
+            <div class="section-intro">
+                <h3>Connected Platform Capabilities</h3>
+                <p>DineBoard integrates with leading services to provide a complete restaurant management ecosystem.</p>
+            </div>
+
+            <div class="subsection">
+                <h3>Core Integrations</h3>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="icon">💬</div>
+                        <h3>Wati - WhatsApp BSP</h3>
+                        <p>WhatsApp Business Service Provider integration for multi-number support</p>
+                        <div class="benefits">
+                            <ul>
+                                <li>Multi-restaurant numbers</li>
+                                <li>Flow builder support</li>
+                                <li>API integration</li>
+                                <li>Template messages</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">🤖</div>
+                        <h3>Google Gemini AI</h3>
+                        <p>AI-powered natural language understanding</p>
+                        <div class="benefits">
+                            <ul>
+                                <li>Hindi + English</li>
+                                <li>Intent detection</li>
+                                <li>Context management</li>
+                                <li>Cost-effective</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">💳</div>
+                        <h3>Razorpay Payments</h3>
+                        <p>India's leading payment gateway integration</p>
+                        <div class="benefits">
+                            <ul>
+                                <li>Multiple payment methods</li>
+                                <li>Subscriptions support</li>
+                                <li>Route for splits</li>
+                                <li>Settlement management</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">☁️</div>
+                        <h3>AWS Infrastructure</h3>
+                        <p>Amazon Web Services for hosting and storage</p>
+                        <div class="benefits">
+                            <ul>
+                                <li>ECS Fargate (serverless)</li>
+                                <li>RDS PostgreSQL</li>
+                                <li>ElastiCache Redis</li>
+                                <li>S3 + CloudFront</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">🔴</div>
+                        <h3>BullMQ - Background Jobs</h3>
+                        <p>Reliable background job processing</p>
+                        <div class="benefits">
+                            <ul>
+                                <li>Reminders</li>
+                                <li>Invoice generation</li>
+                                <li>Table status updates</li>
+                                <li>Report generation</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">📧</div>
+                        <h3>Email Service</h3>
+                        <p>Transactional and marketing emails</p>
+                        <div class="benefits">
+                            <ul>
+                                <li>Order confirmations</li>
+                                <li>Booking reminders</li>
+                                <li>Invoices</li>
+                                <li>Marketing emails</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3>Future Integration Roadmap</h3>
+                <div class="highlight info">
+                    <h4>Planned Integrations</h4>
+                    <p>Upcoming integrations in development:</p>
+                    <ul class="feature-list">
+                        <li>Aggregator integrations (Zomato, Swiggy)</li>
+                        <li>Inventory management systems</li>
+                        <li>CRM platforms (Salesforce, HubSpot)</li>
+                        <li>Accounting software (Tally, QuickBooks)</li>
+                        <li>SMS gateways (Twilio, Msg91)</li>
+                        <li>Loyalty program integrations</li>
+                        <li>Delivery partner APIs</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3>API Availability</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>API Endpoint</th>
+                            <th>Purpose</th>
+                            <th>Authentication</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Menu API</strong></td>
+                            <td>Retrieve menu items for external integrations</td>
+                            <td>API Key + Restaurant ID</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Booking API</strong></td>
+                            <td>Create/manage table bookings programmatically</td>
+                            <td>JWT Token</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Order API</strong></td>
+                            <td>Create orders and track status</td>
+                            <td>JWT Token</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Webhook API</strong></td>
+                            <td>Receive real-time events (orders, bookings, payments)</td>
+                            <td>API Key</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Analytics API</strong></td>
+                            <td>Access restaurant analytics and reports</td>
+                            <td>JWT Token</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- PRICING TIERS -->
+        <section id="pricing" class="section">
+            <h2>💰 Pricing & Plans</h2>
+
+            <div class="section-intro">
+                <h3>Flexible Pricing for Every Restaurant</h3>
+                <p>DineBoard offers a scalable pricing model with subscription + commission, ensuring the platform grows profitably with each restaurant's success.</p>
+            </div>
+
+            <div class="subsection">
+                <h3>Subscription Plans</h3>
+                <div class="tier-boxes">
+                    <div class="tier-box">
+                        <h4>🌟 Basic</h4>
+                        <div class="price">₹999/mo</div>
+                        <ul>
+                            <li>Up to 15 tables</li>
+                            <li>Up to 50 menu items</li>
+                            <li>Up to 3 staff members</li>
+                            <li>Basic analytics</li>
+                            <li>WhatsApp chatbot (limited)</li>
+                            <li>Email support</li>
+                            <li>2% order commission</li>
+                            <li>₹50 per booking commission</li>
+                        </ul>
+                    </div>
+                    <div class="tier-box">
+                        <h4>💎 Professional</h4>
+                        <div class="price">₹2,999/mo</div>
+                        <ul>
+                            <li>Up to 50 tables</li>
+                            <li>Unlimited menu items</li>
+                            <li>Up to 10 staff members</li>
+                            <li>Advanced analytics</li>
+                            <li>Full WhatsApp chatbot</li>
+                            <li>Priority support</li>
+                            <li>1.5% order commission</li>
+                            <li>₹25 per booking commission</li>
+                        </ul>
+                    </div>
+                    <div class="tier-box">
+                        <h4>👑 Enterprise</h4>
+                        <div class="price">Custom</div>
+                        <ul>
+                            <li>Unlimited tables</li>
+                            <li>Unlimited menu items</li>
+                            <li>Unlimited staff</li>
+                            <li>Custom analytics</li>
+                            <li>Advanced AI features</li>
+                            <li>24/7 dedicated support</li>
+                            <li>Custom commission rates</li>
+                            <li>White-label option</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3>Commission Structure (Applies to All Plans)</h3>
+                <div class="highlight success">
+                    <h4>Always-Active Commission Model</h4>
+                    <p>Commission applies to ALL transactions, whether restaurants use DineBoard's platform Razorpay account or their own. This ensures sustainable growth and platform revenue.</p>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Commission Type</th>
+                            <th>Basic Plan</th>
+                            <th>Professional Plan</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Order Commission</strong></td>
+                            <td>2% of order value</td>
+                            <td>1.5% of order value</td>
+                            <td>Calculated on net order amount (after discounts)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Booking Commission</strong></td>
+                            <td>₹50 per booking</td>
+                            <td>₹25 per booking</td>
+                            <td>Applied to confirmed bookings only</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Own Razorpay Account</strong></td>
+                            <td>Commission still applies</td>
+                            <td>Commission still applies</td>
+                            <td>Billed monthly via invoice (not auto-deducted)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Platform Razorpay</strong></td>
+                            <td>Auto-deducted via Route</td>
+                            <td>Auto-deducted via Route</td>
+                            <td>Real-time settlement, transparent accounting</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="subsection">
+                <h3>Additional Costs & Add-ons</h3>
+                <div class="columns">
+                    <div>
+                        <h4>Optional Services</h4>
+                        <ul class="feature-list">
+                            <li>SMS reminders: ₹5 per booking</li>
+                            <li>Premium analytics: ₹500/mo</li>
+                            <li>White-label setup: ₹5,000 (one-time)</li>
+                            <li>Custom domain: ₹1,000/year</li>
+                            <li>API access: ₹2,000/month</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>What's Always Included</h4>
+                        <ul class="feature-list">
+                            <li>WhatsApp AI chatbot</li>
+                            <li>Table booking system</li>
+                            <li>Order management</li>
+                            <li>Customer web portal</li>
+                            <li>Basic reports</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3>Payment & Billing</h3>
+                <div class="highlight info">
+                    <h4>Billing Details</h4>
+                    <ul class="feature-list">
+                        <li><strong>Subscription Billing:</strong> Monthly or yearly payment via Razorpay subscriptions</li>
+                        <li><strong>Commission Billing:</strong> Real-time if using platform Razorpay (via Route), or monthly invoice if using own account</li>
+                        <li><strong>Trial Period:</strong> 30-day free trial for new restaurants</li>
+                        <li><strong>Cancellation:</strong> Cancel anytime, no lock-in period</li>
+                        <li><strong>Refund Policy:</strong> Pro-rata refunds for unused period</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer>
+            <p>🍽️ <strong>DineBoard</strong> - Complete Product Features & Capabilities</p>
+            <p>Your restaurant, beautifully managed. Powered by AI. Built for India.</p>
+            <p style="margin-top: 20px; font-size: 0.9em; opacity: 0.8;">© 2024 DineBoard. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <!-- JAVASCRIPT -->
+    <script>
+        // Navigation functionality
+        const navButtons = document.querySelectorAll('.nav-btn');
+        const sections = document.querySelectorAll('.section');
+
+        navButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const targetSection = button.getAttribute('data-section');
+
+                // Remove active class from all
+                navButtons.forEach(btn => btn.classList.remove('active'));
+                sections.forEach(section => section.classList.remove('active'));
+
+                // Add active class
+                button.classList.add('active');
+                document.getElementById(targetSection).classList.add('active');
+
+                // Scroll to top
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+
+        // Auto-highlight nav on scroll
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (pageYOffset >= sectionTop - 200) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navButtons.forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('data-section') === current) {
+                    btn.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
