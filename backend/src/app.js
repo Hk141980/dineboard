@@ -55,6 +55,7 @@ app.use('/api/platform', apiLimiter, require('./routes/platform'));
 
 // Restaurants (public + admin)
 app.use('/api/restaurants', apiLimiter, require('./routes/restaurants'));
+app.use('/api/tenants', apiLimiter, require('./routes/restaurants'));
 
 // Menu (public + admin)
 app.use('/api/menu', apiLimiter, require('./routes/menu'));

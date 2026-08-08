@@ -29,17 +29,17 @@
   <header class="border-b border-slate-800/80 bg-slate-900/70 backdrop-blur-xl sticky top-0 z-50 px-4 py-3.5 shadow-xl">
     <div class="max-w-md mx-auto flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <div id="restroLogo" class="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-400 via-emerald-600 to-teal-700 flex items-center justify-center font-extrabold text-xl text-white shadow-lg shadow-emerald-950/50 border border-emerald-400/30">
+        <div id="restroLogo" class="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-400 via-emerald-600 to-teal-700 flex items-center justify-center font-extrabold text-xl text-white shadow-lg shadow-emerald-950/50 border border-emerald-400/30 overflow-hidden shrink-0">
           R
         </div>
         <div>
-          <h1 id="restroName" class="font-bold text-base text-white leading-tight tracking-tight">Restro</h1>
-          <p class="text-[11px] text-slate-400 flex items-center gap-1 font-medium">
-            <span>✨ Table Reservations</span>
+          <h1 id="restroName" class="font-bold text-base text-white leading-tight tracking-tight">Tina's Fusion Bistro</h1>
+          <p id="restroHours" class="text-[11px] text-slate-400 flex items-center gap-1 font-medium mt-0.5">
+            <span>🕒 Hours: 10:00 AM - 11:00 PM</span>
           </p>
         </div>
       </div>
-      <div class="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-full">
+      <div id="statusBadge" class="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-full">
         <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
         <span class="text-xs text-emerald-400 font-semibold tracking-wide">Open Now</span>
       </div>
@@ -143,11 +143,15 @@
         </div>
       </div>
 
-      <!-- Preferred Time Slots -->
+      <!-- Preferred Time Slot Dropdown Menu -->
       <div>
-        <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Select Preferred Time</label>
-        <div class="grid grid-cols-4 gap-2" id="timeGrid">
-          <!-- Rendered via JS -->
+        <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Select Preferred Time Slot</label>
+        <div class="relative">
+          <select id="timeSelect" onchange="onTimeSelectChange(this.value)" class="w-full bg-slate-950/90 border border-slate-800 rounded-2xl pl-10 pr-10 py-3.5 text-xs text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/50 transition font-bold cursor-pointer appearance-none">
+            <!-- Rendered dynamically from operating hours via JS -->
+          </select>
+          <span class="absolute left-3.5 top-3.5 text-slate-500 text-sm pointer-events-none">⏰</span>
+          <span class="absolute right-4 top-3.5 text-emerald-400 text-xs pointer-events-none">▼</span>
         </div>
       </div>
 
@@ -178,21 +182,24 @@
         </div>
       </div>
 
-      <!-- Submit CTA Button -->
-      <button type="submit" id="submitBtn" class="w-full py-4 bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 hover:from-emerald-400 hover:to-teal-400 text-white font-extrabold rounded-2xl shadow-xl shadow-emerald-950/60 transition-all transform active:scale-[0.99] flex items-center justify-center gap-2 text-sm tracking-wide">
-        <span>📅</span> Confirm Table Reservation
+      <!-- Submit Button -->
+      <button type="submit" id="submitBtn" class="w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-extrabold text-sm rounded-2xl transition shadow-xl shadow-emerald-950/60 active:scale-[0.98] border border-emerald-400/30 flex items-center justify-center gap-2">
+        <span>Confirm Table Reservation</span>
+        <span class="text-base">➔</span>
       </button>
+
     </form>
   </main>
 
   <!-- Footer -->
-  <footer class="py-4 border-t border-slate-900/80 text-center text-[11px] text-slate-500 font-medium">
+  <footer class="text-center py-4 text-[11px] text-slate-400 border-t border-slate-800/80 bg-slate-950/90 relative z-10">
     Powered by <span class="font-bold text-slate-300">DineBoard</span> · Smart Dining Platform
   </footer>
 
   <script>
     const urlParams = new URLSearchParams(window.location.search);
-    const slug = urlParams.get('r') || urlParams.get('slug') || 'restro';
+    const slug = urlParams.get('r') || urlParams.get('slug') || 'tinas-fusion-bistro';
+    let restaurantData = null;
     let selectedGuests = 2;
     let selectedTime = '19:30';
 
@@ -217,6 +224,103 @@
     const todayStr = getLocalDateString(new Date());
     document.getElementById('dateInput').value = todayStr;
     document.getElementById('dateInput').min = todayStr;
+
+    function formatTime12Hour(timeStr) {
+      if (!timeStr) return '';
+      const [h, m] = timeStr.split(':').map(Number);
+      const ampm = h >= 12 ? 'PM' : 'AM';
+      const displayH = h % 12 || 12;
+      return `${displayH}:${m.toString().padStart(2, '0')} ${ampm}`;
+    }
+
+    async function loadRestaurant() {
+      const endpoints = [
+        `/api/restaurants/by-slug/${slug}`,
+        `/api/tenants/by-slug/${slug}`,
+        `http://localhost:4000/api/restaurants/by-slug/${slug}`
+      ];
+
+      for (const ep of endpoints) {
+        try {
+          const res = await fetch(ep);
+          const resJson = await res.json().catch(() => null);
+          if (resJson && resJson.success && resJson.data) {
+            restaurantData = resJson.data;
+            break;
+          }
+        } catch (e) {}
+      }
+
+      if (restaurantData) {
+        // Set Restaurant Name
+        const nameEl = document.getElementById('restroName');
+        if (nameEl) nameEl.innerText = restaurantData.name;
+
+        // Set Logo / Initials
+        const logoEl = document.getElementById('restroLogo');
+        if (logoEl) {
+          if (restaurantData.logoUrl) {
+            logoEl.innerHTML = `<img src="${restaurantData.logoUrl}" class="w-full h-full object-cover rounded-2xl" alt="${restaurantData.name}" />`;
+          } else {
+            const initials = restaurantData.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+            logoEl.innerText = initials || 'R';
+          }
+        }
+
+        // Set Operating Hours Label
+        const openT = restaurantData.openingTime || '10:00';
+        const closeT = restaurantData.closingTime || '23:00';
+        const subTitleEl = document.getElementById('restroHours');
+        if (subTitleEl) {
+          subTitleEl.innerText = `🕒 Hours: ${formatTime12Hour(openT)} - ${formatTime12Hour(closeT)}`;
+        }
+
+        // Open/Closed Status Badge
+        const now = new Date();
+        const currentMins = now.getHours() * 60 + now.getMinutes();
+        const [openH, openM] = openT.split(':').map(Number);
+        const [closeH, closeM] = closeT.split(':').map(Number);
+        const openMins = openH * 60 + openM;
+        let closeMins = closeH * 60 + closeM;
+        if (closeMins <= openMins) closeMins = 23 * 60 + 59;
+
+        const isOpen = currentMins >= openMins && currentMins <= closeMins;
+        const statusBadge = document.getElementById('statusBadge');
+        if (statusBadge) {
+          if (isOpen) {
+            statusBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span><span class="text-xs text-emerald-400 font-semibold tracking-wide">Open Now</span>`;
+            statusBadge.className = 'flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-full';
+          } else {
+            statusBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-rose-400"></span><span class="text-xs text-rose-400 font-semibold tracking-wide">Closed Now</span>`;
+            statusBadge.className = 'flex items-center gap-2 bg-rose-500/10 border border-rose-500/20 px-3 py-1.5 rounded-full';
+          }
+        }
+      }
+
+      renderTimes();
+    }
+
+    function generateSlots() {
+      const openT = restaurantData?.openingTime || '10:00';
+      const closeT = restaurantData?.closingTime || '23:00';
+
+      const [openH, openM] = openT.split(':').map(Number);
+      const [closeH, closeM] = closeT.split(':').map(Number);
+
+      let startMins = openH * 60 + openM;
+      let endMins = closeH * 60 + closeM;
+      if (endMins <= startMins) endMins = 23 * 60 + 59;
+
+      // Generate 30-minute intervals
+      const generated = [];
+      for (let m = startMins; m <= endMins - 30; m += 30) {
+        const h = Math.floor(m / 60);
+        const mins = m % 60;
+        const slotStr = `${h.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
+        generated.push(slotStr);
+      }
+      return generated.length > 0 ? generated : ['10:00', '11:00', '12:00', '13:00', '14:00', '18:00', '19:00', '19:30', '20:00', '20:30', '21:00', '22:00'];
+    }
 
     function onDateChange() {
       const input = document.getElementById('dateInput');
@@ -274,11 +378,12 @@
       document.getElementById('guestCountBadge').innerText = `${val} ${val === 1 ? 'Guest' : 'Guests'}`;
     }
 
-    const slots = ['12:00', '13:00', '14:00', '18:00', '19:00', '19:30', '20:00', '20:30', '21:00', '21:30', '22:00'];
-    const timeGrid = document.getElementById('timeGrid');
-
     function renderTimes() {
-      timeGrid.innerHTML = '';
+      const timeSelect = document.getElementById('timeSelect');
+      if (!timeSelect) return;
+      timeSelect.innerHTML = '';
+
+      const slots = generateSlots();
       const selectedDate = document.getElementById('dateInput').value;
       const currNow = new Date();
       const isToday = selectedDate === todayStr;
@@ -291,50 +396,39 @@
         const slotMins = h * 60 + m;
         const isPast = isToday && slotMins <= currentMins + 15;
 
-        const hour = h;
-        const ampm = hour >= 12 ? 'PM' : 'AM';
-        const displayH = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour;
-        const label = `${displayH}:${slot.split(':')[1]} ${ampm}`;
-
-        const btn = document.createElement('button');
-        btn.type = 'button';
+        const label = formatTime12Hour(slot);
+        const option = document.createElement('option');
+        option.value = slot;
 
         if (isPast) {
-          btn.disabled = true;
-          btn.className = 'py-2.5 text-xs font-medium rounded-xl border transition text-center bg-slate-950/40 text-slate-600 border-slate-900/60 cursor-not-allowed line-through opacity-50';
-          btn.innerText = label;
+          option.disabled = true;
+          option.innerText = `${label} (Passed)`;
+          option.className = 'bg-slate-900 text-slate-600';
         } else {
           if (!firstValidSlot) firstValidSlot = slot;
-          if (slot === selectedTime) {
-            btn.className = 'py-2.5 text-xs font-bold rounded-xl border transition text-center bg-emerald-500 text-white border-emerald-400 shadow-md shadow-emerald-950/50 scale-[1.02]';
-          } else {
-            btn.className = 'py-2.5 text-xs font-medium rounded-xl border transition text-center bg-slate-950 text-slate-300 border-slate-800 hover:border-slate-700';
-          }
-          btn.innerText = label;
-          btn.onclick = () => {
-            selectedTime = slot;
-            renderTimes();
-          };
+          option.innerText = label;
+          option.className = 'bg-slate-900 text-white font-medium';
         }
-        timeGrid.appendChild(btn);
+        timeSelect.appendChild(option);
       });
 
       // Auto fallback if selected slot was in past
       if (isToday && firstValidSlot && (parseInt(selectedTime.split(':')[0]) * 60 + parseInt(selectedTime.split(':')[1]) <= currentMins + 15)) {
         selectedTime = firstValidSlot;
-        renderTimes();
       } else if (isToday && !firstValidSlot) {
         selectQuickDate(1);
+        return;
       }
+
+      timeSelect.value = selectedTime;
     }
 
-    function onDateChange() {
-      updateQuickDateStyles();
-      renderTimes();
+    function onTimeSelectChange(val) {
+      selectedTime = val;
     }
 
     updateQuickDateStyles();
-    renderTimes();
+    loadRestaurant();
 
     async function submitForm(e) {
       e.preventDefault();
@@ -385,21 +479,18 @@
       if (data && data.success && data.data?.booking) {
         const b = data.data.booking;
         document.getElementById('resCode').innerText = b.bookingCode;
-        document.getElementById('resDateTime').innerText = `${date} at ${b.bookingTime}`;
+        document.getElementById('resDateTime').innerText = `${date} at ${formatTime12Hour(b.bookingTime)}`;
         document.getElementById('resGuests').innerText = `${b.guests} Guests`;
         document.getElementById('resName').innerText = name;
         document.getElementById('bookingForm').classList.add('hidden');
         document.getElementById('successCard').classList.remove('hidden');
-      } else if (data && (data.message || data.data?.message)) {
-        document.getElementById('errorMsg').innerText = data.data?.message || data.message;
-        errDiv.classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       } else {
-        document.getElementById('errorMsg').innerText = 'Unable to connect to server. Please try again.';
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<span>Confirm Table Reservation</span><span class="text-base">➔</span>`;
+        document.getElementById('errorMsg').innerText = data?.message || 'Selected time slot or tables are not available. Please pick another time.';
         errDiv.classList.remove('hidden');
       }
-
-      submitBtn.disabled = false;
-      submitBtn.innerHTML = `<span>📅</span> Confirm Table Reservation`;
     }
   </script>
 </body>
