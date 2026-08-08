@@ -184,6 +184,16 @@ class SettlementService {
 
     const tenant = await prisma.tenant.findUnique({ where: { id: tenantId } });
 
+    // Validate Bank Details before processing bank payout
+    const bank = tenant?.bankDetails;
+    if (!bank || !bank.accountNumber || !bank.ifscCode) {
+      return {
+        success: false,
+        requiresBankDetails: true,
+        message: 'Bank account details (Account Number & IFSC Code) are missing. Please configure your Bank Account Details in Settings before transferring payouts to your bank account.',
+      };
+    }
+
     // Generate bank payout transfer details for the REMAINING UNSETTLED DELTA ONLY!
     const bankSettlementId = `set_${Date.now()}`;
     const utrNumber = `UTR${Math.floor(100000000000 + Math.random() * 900000000000)}`;

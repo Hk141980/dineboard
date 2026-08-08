@@ -59,7 +59,13 @@ export default function PaymentSettlementsPage() {
         alert(res.message || 'Online funds successfully transferred to bank account!');
         await loadData();
       } else {
-        alert(res.message || 'Error processing bank payout');
+        if (res.requiresBankDetails) {
+          if (confirm(`${res.message}\n\nWould you like to go to Settings to configure your Bank Account Details now?`)) {
+            window.location.href = '/admin/settings?tab=payment';
+          }
+        } else {
+          alert(res.message || 'Error processing bank payout');
+        }
       }
     } catch (e: any) {
       alert(e?.message || 'Error processing bank payout');
