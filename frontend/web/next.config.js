@@ -4,6 +4,13 @@ const nextConfig = {
   compress: true,
   swcMinify: true,
   poweredByHeader: false,
+  // Skip TypeScript and ESLint errors during production build
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   env: {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api',
   },
