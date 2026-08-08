@@ -42,7 +42,7 @@ class PaymentService {
         razorpaySubscriptionId: subscription.id,
         subscriptionPlanId: planId,
         status: 'trial',
-        trialEndsAt: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000), // 14 days
+        trialEndsAt: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000), // 2 days
       },
     });
 

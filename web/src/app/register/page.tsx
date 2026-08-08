@@ -240,7 +240,7 @@ export default function RegisterPage() {
               </div>
 
               <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', textAlign: 'center', marginTop: '16px' }}>
-                14-day free trial · No payment required now · Cancel anytime
+                2-day free trial · No payment required now · Cancel anytime
               </p>
             </>
           )}

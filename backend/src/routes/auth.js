@@ -245,7 +245,7 @@ router.post('/register', async (req, res, next) => {
           cuisineType,
           subscriptionPlanId: planId || 'starter',
           status: 'trial',
-          trialEndsAt: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
+          trialEndsAt: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000), // 2 days free trial
         },
       });
 

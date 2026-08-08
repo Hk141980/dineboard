@@ -95,7 +95,7 @@ function HeroSection() {
           animationDelay: '0.4s',
         }}>
           <Link href="/register" className="btn btn-primary btn-lg">
-            Start 14-Day Free Trial →
+            Start 2-Day Free Trial →
           </Link>
           <Link href="/demo" className="btn btn-secondary btn-lg">
             ▶ Watch Demo
@@ -291,7 +291,7 @@ function PricingSection() {
             Simple, Transparent <span className="gradient-text">Pricing</span>
           </h2>
           <p className="section-subtitle" style={{ margin: '0 auto' }}>
-            Start with a 14-day free trial. No credit card required. Upgrade as your restaurant grows.
+            Start with a 2-day free trial. No credit card required. Upgrade as your restaurant grows.
           </p>
         </div>
 

@@ -21,7 +21,7 @@ export default function PricingPage() {
   ];
 
   const faqs = [
-    { q: 'Is there a free trial?', a: 'Yes! Every plan comes with a 14-day free trial. No credit card required.' },
+    { q: 'Is there a free trial?', a: 'Yes! Every plan comes with a 2-day free trial. No credit card required.' },
     { q: 'What are commissions?', a: 'DineBoard charges a small commission on every order and booking processed. This applies regardless of whether you use our Razorpay or your own.' },
     { q: 'Can I use my own Razorpay account?', a: 'Yes! You can add your own Razorpay keys. Commissions will be invoiced monthly instead of auto-deducted.' },
     { q: 'Can I change plans later?', a: 'Absolutely. Upgrade or downgrade anytime from your admin panel.' },

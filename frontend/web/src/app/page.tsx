@@ -148,7 +148,7 @@ function HeroSection() {
           <Link href="/register" className="btn btn-primary" style={{
             padding: '14px 36px', fontSize: '1rem', borderRadius: '12px',
           }}>
-            Start 14-Day Free Trial →
+            Start 2-Day Free Trial →
           </Link>
           <Link href="/features" className="btn btn-secondary" style={{
             padding: '14px 36px', fontSize: '1rem', borderRadius: '12px',
@@ -494,7 +494,7 @@ function CTASection() {
         <Link href="/register" className="btn btn-primary" style={{
           padding: '16px 40px', fontSize: '1.05rem', borderRadius: '12px',
         }}>
-          Start 14-Day Free Trial →
+          Start 2-Day Free Trial →
         </Link>
       </div>
     </section>
