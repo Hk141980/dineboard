@@ -13,10 +13,20 @@ export default function ContactPage() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const getApiUrl = () => {
+    if (typeof window !== 'undefined') {
+      const { hostname } = window.location;
+      if (hostname !== 'localhost' && hostname !== '127.0.0.1') {
+        return '/api';
+      }
+    }
+    return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api'}/platform/contact`, {
+      await fetch(`${getApiUrl()}/platform/contact`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
@@ -24,6 +34,7 @@ export default function ContactPage() {
     } catch (err) {}
     setSubmitted(true);
   };
+
 
   return (
     <div style={{ background: 'var(--bg-primary)', color: 'var(--text-primary)', minHeight: '100vh', paddingTop: '100px' }}>
