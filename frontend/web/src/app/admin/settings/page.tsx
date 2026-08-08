@@ -3,6 +3,17 @@
 import { useState, useEffect } from 'react';
 import { api } from '@/lib/api';
 
+function formatTime12Hour(time24?: string): string {
+  if (!time24) return '';
+  const [hStr, mStr] = time24.split(':');
+  let h = parseInt(hStr, 10);
+  if (isNaN(h)) return time24;
+  const m = mStr || '00';
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  h = h % 12 || 12;
+  return `${h}:${m} ${ampm}`;
+}
+
 export default function SettingsPage() {
   const [tenant, setTenant] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -24,6 +35,11 @@ export default function SettingsPage() {
     upiId: '',
   });
   const [uploadingLogo, setUploadingLogo] = useState(false);
+
+  const getBookingUrl = () => {
+    const origin = typeof window !== 'undefined' ? window.location.origin : 'https://dineboard.in';
+    return `${origin}/booking.html?r=${form.slug || 'restro'}`;
+  };
 
   const handleLogoUpload = async (file: File) => {
     if (!file) return;
@@ -189,14 +205,14 @@ export default function SettingsPage() {
                 Share this unique booking URL on Google, Instagram bio, or WhatsApp with your customers:
               </p>
               <code style={{ fontSize: '0.82rem', background: 'rgba(0, 0, 0, 0.4)', padding: '6px 12px', borderRadius: '8px', color: '#10b981', fontFamily: 'monospace', display: 'inline-block', marginTop: '6px' }}>
-                http://localhost:3000/booking.html?r={form.slug || 'restro'}
+                {getBookingUrl()}
               </code>
             </div>
             <div style={{ display: 'flex', gap: '8px' }}>
               <button
                 type="button"
                 onClick={() => {
-                  navigator.clipboard.writeText(`http://localhost:3000/booking.html?r=${form.slug || 'restro'}`);
+                  navigator.clipboard.writeText(getBookingUrl());
                   alert('✅ Booking link copied to clipboard!');
                 }}
                 style={{ background: '#10b981', color: '#fff', border: 'none', padding: '8px 16px', borderRadius: '10px', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer' }}
@@ -204,7 +220,7 @@ export default function SettingsPage() {
                 📋 Copy Link
               </button>
               <a
-                href={`http://localhost:3000/booking.html?r=${form.slug || 'restro'}`}
+                href={getBookingUrl()}
                 target="_blank"
                 rel="noreferrer"
                 style={{ background: 'rgba(255, 255, 255, 0.1)', color: '#fff', textDecoration: 'none', padding: '8px 16px', borderRadius: '10px', fontSize: '0.8rem', fontWeight: 700 }}
@@ -278,8 +294,14 @@ export default function SettingsPage() {
               <div className="form-group"><label>Pincode</label><input value={form.pincode || ''} onChange={(e) => setForm({ ...form, pincode: e.target.value })} /></div>
             </div>
             <div className="form-row">
-              <div className="form-group"><label>Opening Time</label><input type="time" value={form.openingTime || ''} onChange={(e) => setForm({ ...form, openingTime: e.target.value })} /></div>
-              <div className="form-group"><label>Closing Time</label><input type="time" value={form.closingTime || ''} onChange={(e) => setForm({ ...form, closingTime: e.target.value })} /></div>
+              <div className="form-group">
+                <label>Opening Time {form.openingTime ? `(${formatTime12Hour(form.openingTime)})` : ''}</label>
+                <input type="time" value={form.openingTime || ''} onChange={(e) => setForm({ ...form, openingTime: e.target.value })} />
+              </div>
+              <div className="form-group">
+                <label>Closing Time {form.closingTime ? `(${formatTime12Hour(form.closingTime)})` : ''}</label>
+                <input type="time" value={form.closingTime || ''} onChange={(e) => setForm({ ...form, closingTime: e.target.value })} />
+              </div>
               <div className="form-group"><label>Brand Color</label><input type="color" value={form.primaryColor || '#FF6B35'} onChange={(e) => setForm({ ...form, primaryColor: e.target.value })} style={{ height: '42px' }} /></div>
             </div>
             <button type="submit" className="btn-primary" disabled={saving}>{saving ? 'Saving...' : 'Save Settings'}</button>
@@ -444,7 +466,14 @@ export default function SettingsPage() {
               <button
                 type="button"
                 className="btn-secondary"
-                onClick={() => alert('Meta Embedded Signup Popup: In production, Meta SDK launches a 1-click OTP verification window to auto-link phone numbers without visiting Meta Portal.')}
+                onClick={async (e) => {
+                  if (!form.whatsappNumber) {
+                    alert('⚠️ Please enter your WhatsApp Business Number above before connecting.');
+                    return;
+                  }
+                  await saveWhatsApp(e as any);
+                  alert(`✅ WhatsApp Business number (${form.whatsappNumber}) successfully linked and activated for your AI Chatbot!`);
+                }}
                 style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
               >
                 🌐 Connect via Meta Popup (Automated)

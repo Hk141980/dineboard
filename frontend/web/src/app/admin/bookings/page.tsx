@@ -9,7 +9,17 @@ export default function BookingsManagement() {
   const [dateFilter, setDateFilter] = useState(new Date().toISOString().slice(0, 10));
   const [statusFilter, setStatusFilter] = useState('all');
 
-  useEffect(() => { loadBookings(); }, [dateFilter, statusFilter]);
+  const [slug, setSlug] = useState('');
+
+  useEffect(() => {
+    loadBookings();
+    api.getRestaurantSettings()
+      .then((res) => { if (res.success && res.data?.slug) setSlug(res.data.slug); })
+      .catch(() => {});
+  }, [dateFilter, statusFilter]);
+
+  const origin = typeof window !== 'undefined' ? window.location.origin : 'https://dineboard.in';
+  const bookingUrl = `${origin}/booking.html?r=${slug || 'restro'}`;
 
   async function loadBookings() {
     setLoading(true);
@@ -49,11 +59,11 @@ export default function BookingsManagement() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'rgba(16, 185, 129, 0.08)', border: '1px solid rgba(16, 185, 129, 0.25)', padding: '10px 16px', borderRadius: '14px' }}>
           <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-primary)' }}>🔗 Customer Booking Link:</span>
           <code style={{ fontSize: '0.78rem', background: 'rgba(0, 0, 0, 0.4)', padding: '4px 10px', borderRadius: '8px', color: '#10b981', fontFamily: 'monospace' }}>
-            http://localhost:3000/booking.html?r=restro
+            {bookingUrl}
           </code>
           <button
             onClick={() => {
-              navigator.clipboard.writeText('http://localhost:3000/booking.html?r=restro');
+              navigator.clipboard.writeText(bookingUrl);
               alert('✅ Booking link copied to clipboard!');
             }}
             style={{ background: '#10b981', color: '#fff', border: 'none', padding: '6px 12px', borderRadius: '8px', fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer' }}
@@ -61,7 +71,7 @@ export default function BookingsManagement() {
             📋 Copy Link
           </button>
           <a
-            href="http://localhost:3000/booking.html?r=restro"
+            href={bookingUrl}
             target="_blank"
             rel="noreferrer"
             style={{ background: 'rgba(255, 255, 255, 0.1)', color: '#fff', textDecoration: 'none', padding: '6px 12px', borderRadius: '8px', fontSize: '0.75rem', fontWeight: 700 }}
