@@ -67,7 +67,7 @@ export default function RegisterPage() {
             Start Your Free Trial
           </h1>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>
-            14 days free · No credit card required
+            2 days free · No credit card required
           </p>
         </div>
 
