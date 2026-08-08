@@ -1,3 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&display=swap');
+
+/* ============================================
+   DineBoard — Premium Design System
+   Dark Theme with Orange/Amber Accents
+   ============================================ */
+
 :root {
   --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-display: 'Outfit', 'Inter', sans-serif;
@@ -46,7 +53,7 @@ body {
 
 a { color: inherit; text-decoration: none; transition: color 0.2s ease; }
 
-/* Buttons */
+/* ---- Buttons ---- */
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   padding: 9px 22px; border-radius: 8px; font-weight: 600; font-size: 0.9rem;
@@ -78,7 +85,7 @@ a { color: inherit; text-decoration: none; transition: color 0.2s ease; }
 }
 .btn-tag:hover, .btn-tag.active { background: var(--primary-glow); border-color: var(--primary); color: var(--primary); }
 
-/* Cards */
+/* ---- Cards ---- */
 .card {
   background: var(--bg-card); border: 1px solid var(--border);
   border-radius: var(--radius); padding: 20px; transition: all 0.25s ease;
@@ -94,13 +101,13 @@ a { color: inherit; text-decoration: none; transition: color 0.2s ease; }
 .stat-change.positive { color: var(--success); }
 .stat-change.negative { color: var(--danger); }
 
-/* Grids */
+/* ---- Grids ---- */
 .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
 .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
 .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
 .grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
 
-/* Status Badges */
+/* ---- Status Badges ---- */
 .status {
   display: inline-flex; padding: 3px 9px; border-radius: 999px;
   font-size: 0.72rem; font-weight: 600; text-transform: capitalize;
@@ -112,7 +119,7 @@ a { color: inherit; text-decoration: none; transition: color 0.2s ease; }
 .status-cleaning, .status-served { background: rgba(139,92,246,0.12); color: #8B5CF6; }
 .status-suspended { background: rgba(239,68,68,0.12); color: #EF4444; }
 
-/* Admin Layout */
+/* ---- Admin Layout ---- */
 .admin-layout { display: flex; min-height: 100vh; }
 .admin-sidebar {
   width: 230px; min-height: 100vh; background: var(--bg-secondary);
@@ -126,7 +133,7 @@ a { color: inherit; text-decoration: none; transition: color 0.2s ease; }
   margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border);
 }
 
-/* Data Tables */
+/* ---- Data Tables ---- */
 .data-table { width: 100%; border-collapse: collapse; }
 .data-table th {
   text-align: left; padding: 9px 14px; font-size: 0.75rem;
@@ -139,7 +146,7 @@ a { color: inherit; text-decoration: none; transition: color 0.2s ease; }
 }
 .data-table tr:hover td { background: rgba(255,255,255,0.02); }
 
-/* Modal */
+/* ---- Modal ---- */
 .modal-overlay {
   position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px);
   display: flex; align-items: center; justify-content: center; z-index: 1000;
@@ -149,13 +156,14 @@ a { color: inherit; text-decoration: none; transition: color 0.2s ease; }
   padding: 24px; max-width: 550px; width: 90%; max-height: 85vh; overflow-y: auto;
 }
 
-/* Forms */
+/* ---- Forms ---- */
 .form-group, .input-group { margin-bottom: 14px; }
 .form-group label, .input-group label {
   display: block; font-size: 0.82rem; font-weight: 500; color: var(--text-secondary);
   margin-bottom: 5px;
 }
 
+/* Global form element styling — ensures ALL inputs look consistent */
 input, select, textarea {
   width: 100%; padding: 9px 14px; border-radius: 8px; font-size: 0.85rem;
   border: 1px solid var(--border); background: var(--bg-secondary); color: var(--text-primary);
@@ -179,7 +187,7 @@ input[type="color"] {
 }
 .form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
 
-/* Landing Page Sections */
+/* ---- Landing Page Sections ---- */
 .section { padding: 100px 24px; max-width: 1200px; margin: 0 auto; }
 .section-title {
   font-family: var(--font-display); font-size: 2.5rem; font-weight: 800;
@@ -192,13 +200,13 @@ input[type="color"] {
   max-width: 600px; margin: 0 auto 60px;
 }
 
-/* Glassmorphism */
+/* ---- Glassmorphism ---- */
 .glass {
   background: rgba(22, 22, 31, 0.6); backdrop-filter: blur(20px);
   border: 1px solid var(--border); border-radius: var(--radius-lg);
 }
 
-/* Animations */
+/* ---- Animations ---- */
 @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateY(30px); }
@@ -218,7 +226,7 @@ input[type="color"] {
 .animate-fadeInUp { animation: fadeInUp 0.8s ease-out forwards; }
 .animate-glow { animation: glow 3s ease-in-out infinite; }
 
-/* Responsive */
+/* ---- Responsive ---- */
 @media (max-width: 1024px) {
   .grid-4 { grid-template-columns: repeat(2, 1fr); }
   .grid-5 { grid-template-columns: repeat(3, 1fr); }
@@ -226,6 +234,7 @@ input[type="color"] {
 @media (max-width: 768px) {
   .grid-2, .grid-3, .grid-4, .grid-5 { grid-template-columns: 1fr; }
 
+  /* Admin sidebar: overlay on mobile */
   .admin-layout { display: block; }
   .admin-sidebar {
     position: fixed; top: 0; left: -280px; width: 260px; height: 100vh;
@@ -245,18 +254,23 @@ input[type="color"] {
     padding: 12px 16px; align-items: center; justify-content: space-between;
   }
 
+  /* Landing page */
   .section { padding: 60px 16px; }
   .section-title { font-size: 1.8rem; }
   .section-subtitle { font-size: 0.95rem; }
 
+  /* Landing page nav */
   .desktop-nav { display: none !important; }
   .mobile-hamburger { display: block !important; }
 
+  /* Hide overflow */
   html, body { overflow-x: hidden; max-width: 100vw; }
 }
 
+/* Mobile top bar hidden by default on desktop */
 .mobile-topbar { display: none; }
 
+/* Phone input with prefix */
 .phone-input-group {
   display: flex; align-items: center; gap: 0;
 }
@@ -269,3 +283,4 @@ input[type="color"] {
 .phone-input-group input {
   border-radius: 0 10px 10px 0 !important; flex: 1;
 }
+

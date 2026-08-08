@@ -146,13 +146,13 @@ export default function ContactPage() {
               fontSize: '1.25rem', marginBottom: '12px',
             }}>📧</div>
             <div style={{ fontWeight: 700, fontSize: '0.9rem', marginBottom: '6px' }}>Email</div>
-            <a href="mailto:himanshukumark0@gmail.com" style={{
+            <a href="mailto:info@dineboard.in" style={{
               color: 'var(--text-secondary)',
               fontSize: '0.82rem',
               wordBreak: 'break-all',
               textDecoration: 'none',
             }}>
-              himanshukumark0@gmail.com
+              info@dineboard.in
             </a>
           </div>
 
