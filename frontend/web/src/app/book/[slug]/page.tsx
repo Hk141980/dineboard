@@ -24,8 +24,15 @@ export default function PublicBookingPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  function getLocalDateString(d = new Date()) {
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
   // Form State
-  const [date, setDate] = useState(() => new Date().toISOString().split('T')[0]);
+  const [date, setDate] = useState(() => getLocalDateString(new Date()));
   const [time, setTime] = useState('19:30');
   const [guests, setGuests] = useState(2);
   const [customerName, setCustomerName] = useState('');
