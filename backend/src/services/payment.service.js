@@ -191,7 +191,7 @@ class PaymentService {
           include: { subscriptionPlan: true },
         });
 
-        if (tenant && tenant.subscriptionPlan) {
+        if (tenant && tenant.subscriptionPlan && !tenant.usesOwnRazorpay) {
           const commissionRate = Number(tenant.subscriptionPlan.commissionRate);
           const transactionAmount = Number(updatedOrder.total);
           const commissionAmount = (transactionAmount * commissionRate) / 100;
@@ -204,9 +204,9 @@ class PaymentService {
               transactionAmount,
               commissionRate,
               commissionAmount,
-              collectionMethod: tenant.usesOwnRazorpay ? 'invoice' : 'razorpay_route',
-              status: tenant.usesOwnRazorpay ? 'pending' : 'collected',
-              collectedAt: tenant.usesOwnRazorpay ? null : new Date(),
+              collectionMethod: 'razorpay_route',
+              status: 'collected',
+              collectedAt: new Date(),
             },
           });
         }

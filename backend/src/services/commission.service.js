@@ -16,7 +16,8 @@ class CommissionService {
       include: { subscriptionPlan: true },
     });
 
-    if (!tenant.subscriptionPlan) return null;
+    // Commission is ONLY charged when restaurant uses DineBoard Razorpay gateway
+    if (!tenant || !tenant.subscriptionPlan || tenant.usesOwnRazorpay) return null;
 
     const commissionRate = Number(tenant.subscriptionPlan.commissionRate);
     const commissionAmount = (transactionAmount * commissionRate) / 100;
@@ -29,9 +30,9 @@ class CommissionService {
         transactionAmount,
         commissionRate,
         commissionAmount,
-        collectionMethod: tenant.usesOwnRazorpay ? 'invoice' : 'razorpay_route',
-        status: tenant.usesOwnRazorpay ? 'pending' : 'collected',
-        collectedAt: tenant.usesOwnRazorpay ? null : new Date(),
+        collectionMethod: 'razorpay_route',
+        status: 'collected',
+        collectedAt: new Date(),
       },
     });
   }
@@ -45,7 +46,8 @@ class CommissionService {
       include: { subscriptionPlan: true },
     });
 
-    if (!tenant.subscriptionPlan) return null;
+    // Commission is ONLY charged when restaurant uses DineBoard Razorpay gateway
+    if (!tenant || !tenant.subscriptionPlan || tenant.usesOwnRazorpay) return null;
 
     const commissionRate = Number(tenant.subscriptionPlan.bookingCommission);
     const commissionAmount = (transactionAmount * commissionRate) / 100;
@@ -58,8 +60,9 @@ class CommissionService {
         transactionAmount,
         commissionRate,
         commissionAmount,
-        collectionMethod: tenant.usesOwnRazorpay ? 'invoice' : 'razorpay_route',
-        status: tenant.usesOwnRazorpay ? 'pending' : 'collected',
+        collectionMethod: 'razorpay_route',
+        status: 'collected',
+        collectedAt: new Date(),
       },
     });
   }

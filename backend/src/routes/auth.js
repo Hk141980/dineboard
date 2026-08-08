@@ -230,6 +230,27 @@ router.post('/register', async (req, res, next) => {
 
     const hashedPassword = await bcrypt.hash(password, 12);
 
+    // Resolve subscription plan safely
+    let targetPlanId = null;
+    if (planId) {
+      const matchedPlan = await prisma.subscriptionPlan.findFirst({
+        where: {
+          OR: [
+            { id: planId },
+            { name: { equals: planId, mode: 'insensitive' } },
+          ],
+        },
+      });
+      if (matchedPlan) targetPlanId = matchedPlan.id;
+    }
+    if (!targetPlanId) {
+      const defaultPlan = await prisma.subscriptionPlan.findFirst({
+        where: { isActive: true },
+        orderBy: { monthlyPrice: 'asc' },
+      });
+      targetPlanId = defaultPlan ? defaultPlan.id : null;
+    }
+
     // Create tenant and owner in a transaction
     const result = await prisma.$transaction(async (tx) => {
       const tenant = await tx.tenant.create({
@@ -243,7 +264,7 @@ router.post('/register', async (req, res, next) => {
           state,
           pincode,
           cuisineType,
-          subscriptionPlanId: planId || 'starter',
+          subscriptionPlanId: targetPlanId,
           status: 'trial',
           trialEndsAt: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000), // 2 days free trial
         },
