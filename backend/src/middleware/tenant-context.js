@@ -37,10 +37,20 @@ async function tenantFromAuth(req, res, next) {
       });
     }
 
+    // Auto-expire trial if trialEndsAt has passed
+    if (tenant.status === 'trial' && tenant.trialEndsAt && new Date() > new Date(tenant.trialEndsAt)) {
+      await prisma.tenant.update({
+        where: { id: tenant.id },
+        data: { status: 'expired' },
+      });
+      tenant.status = 'expired';
+    }
+
     if (tenant.status === 'expired') {
       return res.status(403).json({
         success: false,
-        message: 'Subscription expired. Please renew your plan.',
+        isExpired: true,
+        message: 'Your 2-day free trial has expired. Please select a subscription plan to continue.',
       });
     }
 

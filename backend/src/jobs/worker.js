@@ -192,6 +192,24 @@ setInterval(async () => {
   }
 }, 60 * 60 * 1000);
 
+// Trial Expiration Check — runs every 15 minutes
+setInterval(async () => {
+  try {
+    const res = await prisma.tenant.updateMany({
+      where: {
+        status: 'trial',
+        trialEndsAt: { lt: new Date() },
+      },
+      data: { status: 'expired' },
+    });
+    if (res.count > 0) {
+      console.log(`⏰ Updated ${res.count} expired trial accounts to 'expired' status`);
+    }
+  } catch (e) {
+    console.error('Trial expiration cron error:', e.message);
+  }
+}, 15 * 60 * 1000);
+
 // Monthly commission invoice check — daily at midnight
 setInterval(async () => {
   const now = new Date();
