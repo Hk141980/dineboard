@@ -31,6 +31,15 @@ router.post('/generate/:orderId', authenticate, tenantFromAuth, async (req, res,
  */
 router.get('/:id/pdf', async (req, res, next) => {
   try {
+    const { prisma } = require('../config/database');
+    const invoice = await prisma.invoice.findUnique({
+      where: { id: req.params.id },
+    });
+
+    if (invoice && invoice.pdfUrl && invoice.pdfUrl.startsWith('/api/uploads/s3/')) {
+      return res.redirect(invoice.pdfUrl);
+    }
+
     const result = await invoiceService.generatePDF(req.params.id);
     if (!result.success) {
       return res.status(404).json(result);

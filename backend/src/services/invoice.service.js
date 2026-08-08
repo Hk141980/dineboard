@@ -43,7 +43,7 @@ class InvoiceService {
       gstData = calculateGST(Number(order.subtotal) - Number(order.discountAmount));
     }
 
-    const invoice = await prisma.invoice.create({
+    let invoice = await prisma.invoice.create({
       data: {
         tenantId,
         orderId,
@@ -56,6 +56,16 @@ class InvoiceService {
         gstNumber: tenant.gstNumber,
       },
     });
+
+    // Auto-generate PDF & upload to AWS S3
+    try {
+      const pdfRes = await this.generatePDF(invoice.id);
+      if (pdfRes.invoice) {
+        invoice = pdfRes.invoice;
+      }
+    } catch (err) {
+      console.error('⚠️ Invoice PDF generation background warning:', err.message);
+    }
 
     return { success: true, invoice, order, tenant };
   }
@@ -86,9 +96,23 @@ class InvoiceService {
       const chunks = [];
 
       doc.on('data', (chunk) => chunks.push(chunk));
-      doc.on('end', () => {
+      doc.on('end', async () => {
         const pdfBuffer = Buffer.concat(chunks);
-        resolve({ success: true, buffer: pdfBuffer, invoice });
+
+        // Upload PDF Invoice to AWS S3
+        const s3Service = require('./s3.service');
+        const s3Key = `invoices/${invoice.tenant?.slug || 'tenant'}/${invoice.invoiceNumber}.pdf`;
+        const uploadResult = await s3Service.uploadBuffer(pdfBuffer, s3Key, 'application/pdf');
+
+        if (uploadResult.success) {
+          await prisma.invoice.update({
+            where: { id: invoice.id },
+            data: { pdfUrl: uploadResult.url },
+          });
+          invoice.pdfUrl = uploadResult.url;
+        }
+
+        resolve({ success: true, buffer: pdfBuffer, invoice, pdfUrl: uploadResult.url || invoice.pdfUrl });
       });
       doc.on('error', reject);
 
@@ -237,7 +261,8 @@ class InvoiceService {
     }
 
     const whatsappService = require('./whatsapp.service');
-    const pdfUrl = `${process.env.APP_URL || 'http://localhost:3000'}/api/invoices/${invoice.id}/pdf`;
+    const baseUrl = process.env.APP_URL || 'https://dineboard.in';
+    const pdfUrl = invoice.pdfUrl ? `${baseUrl}${invoice.pdfUrl}` : `${baseUrl}/api/invoices/${invoice.id}/pdf`;
 
     const itemsList = order.orderItems
       .map((item) => `  • ${item.quantity}× ${item.itemName}: ₹${item.lineTotal}`)
