@@ -176,6 +176,36 @@ function fuzzyContains(text, target, maxDistance = 2) {
   return false;
 }
 
+/**
+ * Format a Date object or string as YYYY-MM-DD in Indian Standard Time (Asia/Kolkata)
+ */
+function getIndianDateString(d = new Date()) {
+  let targetDate = d;
+  if (!(targetDate instanceof Date) || isNaN(targetDate.getTime())) {
+    targetDate = new Date(d);
+  }
+  if (isNaN(targetDate.getTime())) {
+    targetDate = new Date();
+  }
+  const formatter = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Kolkata',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  });
+  return formatter.format(targetDate);
+}
+
+/**
+ * Get current Date object converted to Indian Standard Time
+ */
+function getIndianNow() {
+  const now = new Date();
+  const utcMs = now.getTime() + (now.getTimezoneOffset() * 60000);
+  const istOffsetMs = 5.5 * 60 * 60 * 1000;
+  return new Date(utcMs + istOffsetMs);
+}
+
 module.exports = {
   generateCode,
   generateInvoiceNumber,
@@ -189,4 +219,6 @@ module.exports = {
   normalizePhone,
   levenshteinDistance,
   fuzzyContains,
+  getIndianDateString,
+  getIndianNow,
 };

@@ -4,7 +4,7 @@
 // ============================================
 
 const { prisma } = require('../config/database');
-const { generateCode, calculateEndTime, timeToMinutes, isWithinOperatingHours } = require('../utils/helpers');
+const { generateCode, calculateEndTime, timeToMinutes, isWithinOperatingHours, getIndianDateString } = require('../utils/helpers');
 const tableService = require('./table.service');
 
 class BookingService {
@@ -29,7 +29,7 @@ class BookingService {
     }
 
     // Validate that booking date and time is NOT in the past
-    const dateStr = typeof date === 'string' ? date.split('T')[0] : new Date(date).toISOString().split('T')[0];
+    const dateStr = typeof date === 'string' ? date.split('T')[0] : getIndianDateString(date);
     const [year, month, day] = dateStr.split('-').map(Number);
     const [reqHours, reqMins] = time.split(':').map(Number);
     const requestedLocalMs = new Date(year, month - 1, day, reqHours, reqMins, 0, 0).getTime();
@@ -38,7 +38,7 @@ class BookingService {
     if (requestedLocalMs < nowMs - 5 * 60 * 1000) {
       const tom = new Date();
       tom.setDate(tom.getDate() + 1);
-      const tomDateStr = tom.toISOString().split('T')[0];
+      const tomDateStr = getIndianDateString(tom);
 
       return {
         available: false,
@@ -323,7 +323,7 @@ class BookingService {
       }
     }
 
-    const formattedDate = new Date(booking.bookingDate).toISOString().split('T')[0];
+    const formattedDate = getIndianDateString(booking.bookingDate);
     return {
       success: true,
       booking,

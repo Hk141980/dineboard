@@ -4,7 +4,7 @@
 // ============================================
 
 const { prisma } = require('../config/database');
-const { generateCode } = require('../utils/helpers');
+const { generateCode, getIndianDateString } = require('../utils/helpers');
 
 class SettlementService {
   /**
@@ -67,7 +67,7 @@ class SettlementService {
     const newOrdersAmount = existingSettlement ? (grandTotal - Number(existingSettlement.grandTotal)) : grandTotal;
 
     return {
-      date: today.toISOString().split('T')[0],
+      date: getIndianDateString(today),
       cashTotal,
       ownRazorpayTotal,
       masterRazorpayTotal,

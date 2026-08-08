@@ -12,6 +12,7 @@ const { prisma } = require('../config/database');
 const whatsappService = require('../services/whatsapp.service');
 const invoiceService = require('../services/invoice.service');
 const commissionService = require('../services/commission.service');
+const { getIndianDateString } = require('../utils/helpers');
 
 const connection = createRedisConnection();
 
@@ -39,7 +40,7 @@ const reminderWorker = new Worker('booking-reminders', async (job) => {
 
   for (const booking of bookings1Hr) {
     try {
-      const dateStr = new Date(booking.bookingDate).toISOString().split('T')[0];
+      const dateStr = getIndianDateString(booking.bookingDate);
       const timeStr = booking.bookingTime.length === 5 ? `${booking.bookingTime}:00` : booking.bookingTime;
       const bookingDateTime = new Date(`${dateStr}T${timeStr}`);
       const diffMin = (bookingDateTime.getTime() - now.getTime()) / 60000;
@@ -68,7 +69,7 @@ const reminderWorker = new Worker('booking-reminders', async (job) => {
 
   for (const booking of bookings30Min) {
     try {
-      const dateStr = new Date(booking.bookingDate).toISOString().split('T')[0];
+      const dateStr = getIndianDateString(booking.bookingDate);
       const timeStr = booking.bookingTime.length === 5 ? `${booking.bookingTime}:00` : booking.bookingTime;
       const bookingDateTime = new Date(`${dateStr}T${timeStr}`);
       const diffMin = (bookingDateTime.getTime() - now.getTime()) / 60000;

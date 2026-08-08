@@ -6,7 +6,7 @@
 const { geminiModel } = require('../config/gemini');
 const { redis } = require('../config/redis');
 const { prisma } = require('../config/database');
-const { fuzzyContains } = require('../utils/helpers');
+const { fuzzyContains, getIndianDateString } = require('../utils/helpers');
 
 class AiService {
   /**
@@ -216,11 +216,11 @@ class AiService {
         time = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
       }
 
-      let date = new Date().toISOString().split('T')[0];
+      let date = getIndianDateString(new Date());
       if (isTomorrow) {
         const tom = new Date();
         tom.setDate(tom.getDate() + 1);
-        date = tom.toISOString().split('T')[0];
+        date = getIndianDateString(tom);
       }
 
       let customerName = null;
@@ -232,10 +232,10 @@ class AiService {
       const nowMins = now.getHours() * 60 + now.getMinutes();
       const timeMins = parseInt(time.split(':')[0]) * 60 + parseInt(time.split(':')[1]);
 
-      if (!hasExplicitDate && date === now.toISOString().split('T')[0] && timeMins < nowMins - 15) {
+      if (!hasExplicitDate && date === getIndianDateString(now) && timeMins < nowMins - 15) {
         const tom = new Date(now);
         tom.setDate(now.getDate() + 1);
-        const tomDateStr = tom.toISOString().split('T')[0];
+        const tomDateStr = getIndianDateString(tom);
 
         const ampmLabel = parseInt(time.split(':')[0]) >= 12 ? 'PM' : 'AM';
 
@@ -424,10 +424,10 @@ class AiService {
     }
 
     const now = new Date();
-    const currentDateStr = now.toISOString().split('T')[0];
+    const currentDateStr = getIndianDateString(now);
     const tom = new Date(now);
     tom.setDate(now.getDate() + 1);
-    const tomorrowDateStr = tom.toISOString().split('T')[0];
+    const tomorrowDateStr = getIndianDateString(tom);
 
     return `You are "DineBoard Assistant", a warm, hospitable human restaurant host for "${tenant.name}".
 ${tenant.tagline ? `Tagline: ${tenant.tagline}` : ''}

@@ -4,6 +4,7 @@
 // ============================================
 
 const { prisma } = require('../config/database');
+const { getIndianDateString } = require('../utils/helpers');
 
 class ReportService {
   /**
@@ -152,7 +153,7 @@ class ReportService {
     // Group by day
     const grouped = {};
     orders.forEach((order) => {
-      const key = order.createdAt.toISOString().split('T')[0];
+      const key = getIndianDateString(order.createdAt);
       if (!grouped[key]) {
         grouped[key] = { date: key, orders: 0, revenue: 0, items: 0 };
       }
