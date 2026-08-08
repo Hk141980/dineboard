@@ -245,7 +245,7 @@ export default function PublicBookingPage() {
                 </span>
               </div>
 
-              <!-- Custom Guest Counter & Entry Box -->
+              {/* Custom Guest Counter & Entry Box */}
               <div className="flex items-center gap-2 bg-slate-950/90 border border-slate-800 rounded-2xl p-1.5">
                 <button
                   type="button"
